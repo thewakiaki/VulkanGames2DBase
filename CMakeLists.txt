@@ -13,7 +13,9 @@ set(CMAKE_BUILD_TYPE Debug CACHE STRING ("Choose Debug or Release build" FORCE))
 
 add_executable(VulkanGame
 	source/main.cpp
-	)
+)
+
+target_compile_features(VulkanGame PRIVATE cxx_std_17)
 	
 target_include_directories(VulkanGame PUBLIC include PRIVATE source)
 
