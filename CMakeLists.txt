@@ -9,7 +9,7 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wall -Wextra")
-set(CMAKE_BUILT_TYPE Debug CACHE STRING ("Choose Debug or Release build" FORCE))
+set(CMAKE_BUILD_TYPE Debug CACHE STRING ("Choose Debug or Release build" FORCE))
 
 add_executable(VulkanGame
 	source/main.cpp
