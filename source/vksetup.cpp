@@ -7,7 +7,7 @@ void vkSetup::Run()
 {
     vk::raii::Context context;
 
-    vk::ApplicationInfo game_info
+    constexpr vk::ApplicationInfo game_info
     {
         vk::StructureType::eApplicationInfo,
         nullptr,
