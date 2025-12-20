@@ -1,8 +1,16 @@
-#include <iostream>
+#include "../include/vksetup.h"
 
 int main()
 {
-    std::cout << "Test" << std::endl;
+    vkSetup vk;
+
+    try {
+        vk.Run();
+    }
+    catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
     
-    return 0;
+    return EXIT_SUCCESS;
 }

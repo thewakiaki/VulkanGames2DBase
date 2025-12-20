@@ -5,15 +5,16 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(Vulkan REQUIRED)
 find_package(glfw3 REQUIRED)
-find_package(SDL2 REQUIRED)
+find_package(SDL3 REQUIRED)
 find_package(SDL2_mixer REQUIRED)
-
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wall -Wextra")
-set(CMAKE_BUILD_TYPE Debug CACHE STRING ("Choose Debug or Release build" FORCE))
 
 add_executable(VulkanGame
 	source/main.cpp
+
+	source/vksetup.cpp
 )
+
+target_precompile_headers(VulkanGame PRIVATE include/pch.h)
 
 target_compile_features(VulkanGame PRIVATE cxx_std_17)
 	
