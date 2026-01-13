@@ -11,7 +11,11 @@ find_package(SDL2_mixer REQUIRED)
 add_executable(VulkanGame
 	source/main.cpp
 
-	source/vksetup.cpp
+        source/GameApp.cpp
+		source/GameWindow.cpp
+		include/GameWindow.h
+		source/vkSetup.cpp
+		include/vkSetup.h
 )
 
 target_precompile_headers(VulkanGame PRIVATE include/pch.h)

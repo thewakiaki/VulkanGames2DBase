@@ -11,5 +11,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
+#include <memory>
+#include <map>
+#include <vector>
 
 #endif // PCH_H
