@@ -14,8 +14,11 @@ add_executable(VulkanGame
         source/GameApp.cpp
 		source/GameWindow.cpp
 		include/GameWindow.h
-		source/vkSetup.cpp
-		include/vkSetup.h
+		source/VkSetup.cpp
+		include/VkSetup.h
+		source/CustomPD.cpp
+		include/CustomPD.h
+		include/CustomVkStructs.h
 )
 
 target_precompile_headers(VulkanGame PRIVATE include/pch.h)

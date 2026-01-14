@@ -2,17 +2,24 @@
 // Created by wakiaki on 1/13/26.
 //
 
-#include "../include/vkSetup.h"
+#include "../include/VkSetup.h"
 #include <algorithm>
 
-bool vkSetup::InitVulkan()
+VkSetup::VkSetup(){
+
+}
+
+VkSetup::~VkSetup() {
+}
+
+bool VkSetup::InitVulkan()
 {
     if (!CreateInstance()) { return false; }
 
     return true;
 }
 
-bool vkSetup::CreateInstance()
+bool VkSetup::CreateInstance()
 {
     try {
         vk::raii::Context context;
@@ -48,6 +55,11 @@ bool vkSetup::CreateInstance()
         create_info.ppEnabledExtensionNames = glfwExtensions;
 
         mVulkanInstance = vk::raii::Instance(context, create_info);
+
+        std::vector<vk::raii::PhysicalDevice> devices = mVulkanInstance.enumeratePhysicalDevices();
+        mPhysicalDevice = CustomPD(devices[0]);
+
+
         return true;
     }
     catch (const vk::SystemError& err)
@@ -61,53 +73,29 @@ bool vkSetup::CreateInstance()
         return false;
     }
 
-
 }
 
-bool vkSetup::CheckExtensions(const vk::raii::Context& vContext, const uint32_t& extensionCount, const char**& extensions)
-{
+bool VkSetup::CheckExtensions(const vk::raii::Context& vContext, const uint32_t& extensionCount, const char**& extensions) {
+
     auto extensionProperties = vContext.enumerateInstanceExtensionProperties();
     bool extensionFound = false;
 
 
-    for (uint32_t i = 0; i < extensionCount; ++i)
-    {
+    for (uint32_t i = 0; i < extensionCount; ++i) {
         extensionFound = false;
 
-        for (const auto& property : extensionProperties)
-        {
-            if (strcmp(property.extensionName, extensions[i]) == 0)
-            {
+        for (const auto& property : extensionProperties) {
+            if (strcmp(property.extensionName, extensions[i]) == 0) {
                 extensionFound = true;
                 break;
             }
         }
 
-        if (!extensionFound)
-        {
+        if (!extensionFound) {
             std::cerr << "Warning: extension " << extensions[i] << " not found\n";
             return false;
         }
 
-    }
-
-    return true;
-}
-
-bool vkSetup::PickPhysicalDevice(vk::raii::PhysicalDevice pDevice)
-{
-    std::vector<vk::raii::PhysicalDevice> devices = mVulkanInstance.enumeratePhysicalDevices();
-
-    if (devices.empty())
-    {
-        std::cerr << "No physical device found\n";
-        return false;
-    }
-
-    for (const vk::raii::PhysicalDevice& device : devices)
-    {
-        pDevice = device;
-        break;
     }
 
     return true;

@@ -14,5 +14,6 @@
 #include <memory>
 #include <map>
 #include <vector>
+#include <array>
 
 #endif // PCH_H

@@ -4,7 +4,7 @@
 GameApp::GameApp() {}
 
 
-bool GameApp::Run(GameWindow& game_window, vkSetup& setup)
+bool GameApp::Run(GameWindow& game_window, VkSetup& setup)
 {
     if (!setup.InitVulkan()) { return false; }
 
@@ -22,6 +22,8 @@ bool GameApp::GameStart(GameWindow& game_window)
         mPlaying = true;
         return true;
     }
+
+    std::cerr << "Game Failed to Start\n";
 
     return false;
 }

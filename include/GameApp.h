@@ -4,14 +4,14 @@
 #define GLFW_INCLUDE_VULKAN
 
 #include "GameWindow.h"
-#include "vkSetup.h"
+#include "VkSetup.h"
 
 class GameApp
 {
 public:
     GameApp();
 
-    bool Run(GameWindow& game_window, vkSetup& setup);
+    bool Run(GameWindow& game_window, VkSetup& setup);
 
 private:
 

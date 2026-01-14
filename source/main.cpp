@@ -1,13 +1,13 @@
 #include "../include/GameApp.h"
 #include "../include/GameWindow.h"
-#include "../include/vkSetup.h"
+#include "../include/VkSetup.h"
 
 
 
 int main()
 {
     try {
-        vkSetup vulkan;
+        VkSetup vulkan;
         GameApp game_app;
         GameWindow game_window;
 
