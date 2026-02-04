@@ -6,6 +6,8 @@ GameApp::GameApp() {}
 
 bool GameApp::Run(GameWindow& game_window, VkSetup& setup)
 {
+    std::cout << "Game Starting Up\n";
+    
     if (!setup.InitVulkan()) { return false; }
 
     if (!GameStart(game_window)) { return false; }

@@ -3,6 +3,13 @@ project(VulkanGames2DBase)
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "No build type selected, defaulting to Debug")
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the build type" FORCE)
+endif()
+
 find_package(Vulkan REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(SDL3 REQUIRED)
@@ -24,7 +31,7 @@ add_executable(VulkanGame
 target_precompile_headers(VulkanGame PRIVATE include/pch.h)
 
 target_compile_features(VulkanGame PRIVATE cxx_std_17)
-	
+
 target_include_directories(VulkanGame PUBLIC include PRIVATE source)
 
 target_link_libraries(VulkanGame

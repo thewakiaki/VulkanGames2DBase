@@ -1,13 +1,17 @@
 //
 // Created by wakiaki on 1/14/26.
 //
-
-#include <utility>
+#include <cstddef>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_raii.hpp>
 
 #include "../include/CustomPD.h"
+#include "CustomVkStructs.h"
+#include "vulkan/vulkan.hpp"
 
+CustomPD::CustomPD()
+{
 
-CustomPD::CustomPD(vk::raii::PhysicalDevice device) : mPhysicalDevice(std::move(device)) {
 }
 
 void CustomPD::SelectPhysicalDevice(const vk::raii::Instance& vk_instance) {
@@ -15,7 +19,7 @@ void CustomPD::SelectPhysicalDevice(const vk::raii::Instance& vk_instance) {
     std::vector<vk::raii::PhysicalDevice> devices = vk_instance.enumeratePhysicalDevices();
 
     if (devices.empty()) {
-        std::cerr << "No physical device found\n";
+        std::cerr << "No physical device with Vulkan support found\n";
         return;
     }
 
@@ -33,7 +37,7 @@ void CustomPD::SelectPhysicalDevice(const vk::raii::Instance& vk_instance) {
         }
 
         ScoreDevice(device);
-        std::cout << "Device : " << device.getProperties().deviceName << " Scored: " << score << "\n";
+
 
         score = 0;
     }
@@ -43,16 +47,51 @@ void CustomPD::SelectPhysicalDevice(const vk::raii::Instance& vk_instance) {
 
 void CustomPD::ScoreDevice(const vk::raii::PhysicalDevice &device) {
 
+    int score = 0;
+
+    vk::PhysicalDeviceFeatures availableFeatures = device.getFeatures();
+
+    ///ADD FEATURES YOU WANT HERE AND SCORE BASED ON YOUR IMPORTANCE TO THE GAME
+    if(availableFeatures.samplerAnisotropy) { score += 17; }
+    if(availableFeatures.fillModeNonSolid) { score += 10; }
+    if(availableFeatures.geometryShader) { score += 20; }
+    if(availableFeatures.wideLines) { score += 5; }
+    if(availableFeatures.textureCompressionBC) { score += 8; }
+
+    std::cout << "Device : " << device.getProperties().deviceName << " Scored: " << score << "\n";
+
+    deviceScores.emplace_back(CustomVKStructs::PhysicalDeviceScore(score, device));
 }
 
 void CustomPD::GetMostSuitableDevice() {
 
+    CustomVKStructs::PhysicalDeviceScore bestDevice = deviceScores[0];
+
+    for(size_t device = 1; device < deviceScores.size(); ++device)
+    {
+        const CustomVKStructs::PhysicalDeviceScore& current = deviceScores[device];
+
+        if(bestDevice.score < current.score)
+        {
+            bestDevice = current;
+        }
+
+        if(bestDevice.score == current.score)
+        {
+            bool type1 = bestDevice.physical_device.getProperties().deviceType == vk::PhysicalDeviceType::eDiscreteGpu;
+            bool type2 = current.physical_device.getProperties().deviceType == vk::PhysicalDeviceType::eDiscreteGpu;
+
+            if(type1 < type2) { bestDevice = deviceScores[device]; }
+        }
+
+    }
+
+    mPhysicalDevice = bestDevice.physical_device;
 }
 
 bool CustomPD::DeviceTypeSuitable(const vk::raii::PhysicalDevice& device) {
 
     vk::PhysicalDeviceProperties deviceProperties = device.getProperties();
-    vk::PhysicalDeviceFeatures deviceFeatures = device.getFeatures();
 
-    return deviceProperties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu;
+    return deviceProperties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu || deviceProperties.deviceType == vk::PhysicalDeviceType::eIntegratedGpu;
 }

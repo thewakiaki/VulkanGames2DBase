@@ -1,6 +1,7 @@
 #ifndef PCH_H
 #define PCH_H
 
+
 #define VULKAN_HPP_NO_STRUCT_CONSTRUCTORS
 
 #include <vulkan/vulkan_raii.hpp>
@@ -11,6 +12,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
+#include <cstdint>
 #include <memory>
 #include <map>
 #include <vector>

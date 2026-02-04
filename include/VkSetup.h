@@ -11,7 +11,7 @@ class VkSetup
 {
 public:
     VkSetup();
-    ~VkSetup();
+    ~VkSetup() {};
 
     bool InitVulkan();
 

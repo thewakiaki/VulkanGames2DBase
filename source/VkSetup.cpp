@@ -3,13 +3,12 @@
 //
 
 #include "../include/VkSetup.h"
-#include <algorithm>
+#include "CustomPD.h"
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_raii.hpp>
 
-VkSetup::VkSetup(){
-
-}
-
-VkSetup::~VkSetup() {
+VkSetup::VkSetup() {
+    mPhysicalDevice = CustomPD();
 }
 
 bool VkSetup::InitVulkan()
@@ -56,9 +55,7 @@ bool VkSetup::CreateInstance()
 
         mVulkanInstance = vk::raii::Instance(context, create_info);
 
-        std::vector<vk::raii::PhysicalDevice> devices = mVulkanInstance.enumeratePhysicalDevices();
-        mPhysicalDevice = CustomPD(devices[0]);
-
+        mPhysicalDevice.SelectPhysicalDevice(mVulkanInstance);
 
         return true;
     }

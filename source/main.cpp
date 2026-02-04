@@ -2,8 +2,6 @@
 #include "../include/GameWindow.h"
 #include "../include/VkSetup.h"
 
-
-
 int main()
 {
     try {
@@ -17,6 +15,6 @@ int main()
         std::cerr << e.what() << std::endl;
         return EXIT_FAILURE;
     }
-    
+
     return EXIT_SUCCESS;
 }
