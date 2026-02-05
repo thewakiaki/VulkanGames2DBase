@@ -1,5 +1,6 @@
 #include "../include/GameApp.h"
 #include "GameWindow.h"
+#include <GLFW/glfw3.h>
 
 GameApp::GameApp() {}
 
@@ -7,7 +8,7 @@ GameApp::GameApp() {}
 bool GameApp::Run(GameWindow& game_window, VkSetup& setup)
 {
     std::cout << "Game Starting Up\n";
-    
+
     if (!setup.InitVulkan()) { return false; }
 
     if (!GameStart(game_window)) { return false; }
@@ -36,6 +37,10 @@ bool GameApp::GamePlaying(const GameWindow& game_window)
     while (!glfwWindowShouldClose(game_window.GetWindow()))
     {
         glfwPollEvents();
+
+        if (glfwGetKey(game_window.GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+                  glfwSetWindowShouldClose(game_window.GetWindow(), true);
+              }
     }
 
     GameEnd();
@@ -45,11 +50,6 @@ bool GameApp::GamePlaying(const GameWindow& game_window)
 
 void GameApp::GameEnd()
 {
+    glfwTerminate();
     std::cout << "Game Finished\n";
 }
-
-
-
-
-
-

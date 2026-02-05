@@ -10,6 +10,7 @@ int main()
         GameWindow game_window;
 
         game_app.Run(game_window, vulkan);
+        std::cout << "Finished\n";
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;

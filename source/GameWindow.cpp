@@ -3,6 +3,7 @@
 //
 
 #include "../include/GameWindow.h"
+#include <GLFW/glfw3.h>
 
 GameWindow::GameWindow()
 {
@@ -20,14 +21,18 @@ GameWindow::~GameWindow()
 
 bool GameWindow::InitGameWindow()
 {
+    glfwInit();
+
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    glfwInit();
 
     mGame_window = glfwCreateWindow(initial_window_width, initial_window_height, mGame_Title, nullptr, nullptr);
 
-    if (mGame_window) { return true; }
+    if (mGame_window) {
+        glfwShowWindow(mGame_window);
+        return true;
+    }
 
     return false;
 }

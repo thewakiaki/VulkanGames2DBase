@@ -2,6 +2,8 @@
 // Created by wakiaki on 1/14/26.
 //
 #include <cstddef>
+#include <cstdint>
+#include <vector>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_raii.hpp>
 
@@ -14,20 +16,25 @@ CustomPD::CustomPD()
 
 }
 
-void CustomPD::SelectPhysicalDevice(const vk::raii::Instance& vk_instance) {
+bool CustomPD::SetUpPhysicalDevice(const vk::raii::Instance& vk_instance){
+
+    return SelectPhysicalDevice(vk_instance) && (FindQueueFamilies() != mNoGraphicsQueue);
+}
+
+bool CustomPD::SelectPhysicalDevice(const vk::raii::Instance& vk_instance) {
 
     std::vector<vk::raii::PhysicalDevice> devices = vk_instance.enumeratePhysicalDevices();
 
     if (devices.empty()) {
         std::cerr << "No physical device with Vulkan support found\n";
-        return;
+        return false;
     }
 
     std::cout << "Physical device found\n";
 
-    int score = 0;
-
     for (const vk::raii::PhysicalDevice& device : devices) {
+        int score = 0;
+
         vk::PhysicalDeviceProperties deviceProperties = device.getProperties();
         vk::PhysicalDeviceFeatures deviceFeatures = device.getFeatures();
 
@@ -37,12 +44,11 @@ void CustomPD::SelectPhysicalDevice(const vk::raii::Instance& vk_instance) {
         }
 
         ScoreDevice(device);
-
-
-        score = 0;
     }
 
     GetMostSuitableDevice();
+    std::cout << "Most Suitable Device: " << mPhysicalDevice.getProperties().deviceName << "\n";
+    return true;
 }
 
 void CustomPD::ScoreDevice(const vk::raii::PhysicalDevice &device) {
@@ -94,4 +100,21 @@ bool CustomPD::DeviceTypeSuitable(const vk::raii::PhysicalDevice& device) {
     vk::PhysicalDeviceProperties deviceProperties = device.getProperties();
 
     return deviceProperties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu || deviceProperties.deviceType == vk::PhysicalDeviceType::eIntegratedGpu;
+}
+
+uint32_t CustomPD::FindQueueFamilies(){
+
+    const std::vector<vk::QueueFamilyProperties>& deviceQueueFamilies = mPhysicalDevice.getQueueFamilyProperties();
+
+    for(uint32_t queue_index = 0; queue_index < deviceQueueFamilies.size(); ++queue_index)
+    {
+        if(deviceQueueFamilies[queue_index].queueFlags & vk::QueueFlagBits::eGraphics)
+        {
+            std::cout << "Graphics Queue Families found\n";
+            return queue_index;
+        }
+    }
+
+    std::cerr << "No required Queue Families found\n";
+    return mNoGraphicsQueue;
 }

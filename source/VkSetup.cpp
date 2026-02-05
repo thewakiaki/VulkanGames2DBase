@@ -7,9 +7,7 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_raii.hpp>
 
-VkSetup::VkSetup() {
-    mPhysicalDevice = CustomPD();
-}
+VkSetup::VkSetup() : mPhysicalDevice() {}
 
 bool VkSetup::InitVulkan()
 {
@@ -55,7 +53,7 @@ bool VkSetup::CreateInstance()
 
         mVulkanInstance = vk::raii::Instance(context, create_info);
 
-        mPhysicalDevice.SelectPhysicalDevice(mVulkanInstance);
+        mPhysicalDevice.SetUpPhysicalDevice(mVulkanInstance);
 
         return true;
     }
