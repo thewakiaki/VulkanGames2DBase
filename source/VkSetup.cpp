@@ -4,10 +4,11 @@
 
 #include "../include/VkSetup.h"
 #include "CustomPD.h"
+#include "vulkan/vulkan.hpp"
+#include <memory>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_raii.hpp>
 
-VkSetup::VkSetup() : mPhysicalDevice() {}
 
 bool VkSetup::InitVulkan()
 {
@@ -19,19 +20,8 @@ bool VkSetup::InitVulkan()
 bool VkSetup::CreateInstance()
 {
     try {
-        vk::raii::Context context;
 
-
-        constexpr vk::ApplicationInfo game_info
-        {
-            vk::StructureType::eApplicationInfo,
-            nullptr,
-            "Game Info",
-            VK_MAKE_VERSION(1, 0, 0),
-            "No Engine",
-            VK_MAKE_VERSION(1, 0, 0),
-            vk::ApiVersion14
-        };
+        constexpr vk::ApplicationInfo gameInfo("Game Name", VK_MAKE_VERSION(1, 0, 0), "Game Engine", VK_MAKE_VERSION(1, 0, 0), VK_API_VERSION_1_0);
 
         uint32_t glfwExtensionCount = 0;
         auto glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
@@ -44,16 +34,16 @@ bool VkSetup::CreateInstance()
     #endif
 
 
-        if (!CheckExtensions(context, glfwExtensionCount, glfwExtensions)) { return false; }
+        if (!CheckExtensions(mContext, glfwExtensionCount, glfwExtensions)) { return false; }
 
-        vk::InstanceCreateInfo create_info;
-        create_info.setPApplicationInfo(&game_info);
-        create_info.enabledExtensionCount = glfwExtensionCount;
-        create_info.ppEnabledExtensionNames = glfwExtensions;
+        vk::InstanceCreateInfo create_info({}, &gameInfo, 0, nullptr, glfwExtensionCount, glfwExtensions);
 
-        mVulkanInstance = vk::raii::Instance(context, create_info);
 
-        mPhysicalDevice.SetUpPhysicalDevice(mVulkanInstance);
+        mVulkanInstance = std::make_unique<vk::raii::Instance>(mContext, create_info);
+
+        mPhysicalDevice = std::make_unique<CustomPD>();
+
+        mPhysicalDevice->SetUpPhysicalDevice(mVulkanInstance);
 
         return true;
     }

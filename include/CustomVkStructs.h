@@ -3,6 +3,7 @@
 //
 #ifndef VULKANGAMES2DBASE_CUSTOMVKSTRUCTS_H
 #define VULKANGAMES2DBASE_CUSTOMVKSTRUCTS_H
+#include <memory>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_raii.hpp>
 
@@ -11,13 +12,14 @@
 namespace CustomVKStructs {
 
     struct PhysicalDeviceScore {
-        PhysicalDeviceScore(int scr, vk::raii::PhysicalDevice pd = VK_NULL_HANDLE)
-                : score(scr), physical_device(pd) {}
+        PhysicalDeviceScore() = default;
+        PhysicalDeviceScore(int scr, std::unique_ptr<vk::raii::PhysicalDevice> device) : score(scr), physical_device{std::move(device)} {}
 
-        int score;
-        vk::raii::PhysicalDevice physical_device = VK_NULL_HANDLE;
+        void SetDevice(std::unique_ptr<vk::raii::PhysicalDevice> device) { physical_device = std::move(device);}
+
+        int score = 0;
+        std::unique_ptr<vk::raii::PhysicalDevice> physical_device;
     };
-
 }
 
 #endif //VULKANGAMES2DBASE_CUSTOMVKSTRUCTS_H

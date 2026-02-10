@@ -1,9 +1,6 @@
 #ifndef PCH_H
 #define PCH_H
 
-
-#define VULKAN_HPP_NO_STRUCT_CONSTRUCTORS
-
 #include <vulkan/vulkan_raii.hpp>
 #include <GLFW/glfw3.h>
 #include <SDL3/SDL.h>

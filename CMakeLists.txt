@@ -26,6 +26,8 @@ add_executable(VulkanGame
 		source/CustomPD.cpp
 		include/CustomPD.h
 		include/CustomVkStructs.h
+		include/CustomLD.h
+		source/CustomLD.cpp
 )
 
 target_precompile_headers(VulkanGame PRIVATE include/pch.h)

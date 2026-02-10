@@ -10,7 +10,7 @@
 class VkSetup
 {
 public:
-    VkSetup();
+    VkSetup() = default;
     ~VkSetup() {};
 
     bool InitVulkan();
@@ -20,8 +20,9 @@ private:
     bool CreateInstance();
     bool CheckExtensions(const vk::raii::Context& vContext, const uint32_t& extensionCount, const char**& extensions);
 
-    vk::raii::Instance mVulkanInstance = nullptr;
-    CustomPD mPhysicalDevice;
+    std::unique_ptr<vk::raii::Instance> mVulkanInstance;
+    vk::raii::Context mContext;
+    std::unique_ptr<CustomPD> mPhysicalDevice;
 };
 
 
