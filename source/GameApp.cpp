@@ -1,26 +1,47 @@
 #include "../include/GameApp.h"
+#include "CustomLD.h"
+#include "CustomPD.h"
+#include "CustomSurface.h"
 #include "GameWindow.h"
+#include "VkSetup.h"
 #include <GLFW/glfw3.h>
+#include <memory>
+
 
 GameApp::GameApp() {}
 
 
-bool GameApp::Run(GameWindow& game_window, VkSetup& setup)
+bool GameApp::Run()
 {
     std::cout << "Game Starting Up\n";
 
-    if (!setup.InitVulkan()) { return false; }
+    if(!glfwInit()){
+        std::cerr << "Failed to init glfw\n";
+        return false;
+    }
 
-    if (!GameStart(game_window)) { return false; }
+    InitEngineComponents();
 
-    GamePlaying(game_window);
+    if(!mGameWindow->InitGameWindow()) { return false; }
+
+    if (!mVkInstance->InitVulkan()) { return false; }
+
+    if(!mCustomSurface->CreateSurface(mVkInstance->GetInstance(), mGameWindow->GetWindow())) { return false; }
+
+    if(!mPhysicalDevice->SetUpPhysicalDevice(mVkInstance->GetInstance(), mCustomSurface)) { return false; }
+
+    if(!mLogicalDevice->CreateDeviceInfo(*mPhysicalDevice)) { return false; }
+
+    if (!GameStart()) { return false; }
+
+    GamePlaying();
 
     return true;
 }
 
-bool GameApp::GameStart(GameWindow& game_window)
+bool GameApp::GameStart()
 {
-    if (game_window.InitGameWindow())
+    if (mGameWindow->InitGameWindow())
     {
         mPlaying = true;
         return true;
@@ -31,15 +52,15 @@ bool GameApp::GameStart(GameWindow& game_window)
     return false;
 }
 
-bool GameApp::GamePlaying(const GameWindow& game_window)
+bool GameApp::GamePlaying()
 {
 
-    while (!glfwWindowShouldClose(game_window.GetWindow()))
+    while (!glfwWindowShouldClose(mGameWindow->GetWindow()))
     {
         glfwPollEvents();
 
-        if (glfwGetKey(game_window.GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-                  glfwSetWindowShouldClose(game_window.GetWindow(), true);
+        if (glfwGetKey(mGameWindow->GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+                  glfwSetWindowShouldClose(mGameWindow->GetWindow(), true);
               }
     }
 
@@ -52,4 +73,13 @@ void GameApp::GameEnd()
 {
     glfwTerminate();
     std::cout << "Game Finished\n";
+}
+
+void GameApp::InitEngineComponents(){
+    mGameWindow = std::make_unique<GameWindow>();
+    mVkInstance = std::make_unique<VkSetup>();
+    mCustomSurface = std::make_unique<CustomSurface>();
+    mPhysicalDevice = std::make_unique<CustomPD>();
+    mLogicalDevice = std::make_unique<CustomLD>();
+
 }

@@ -1,8 +1,11 @@
 #ifndef PCH_H
 #define PCH_H
 
-#include <vulkan/vulkan_raii.hpp>
+#define GLFW_INCLUDE_VULKAN
+
 #include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
+#include <vulkan/vulkan_raii.hpp>
 #include <SDL3/SDL.h>
 #include <SDL3_mixer/SDL_mixer.h>
 

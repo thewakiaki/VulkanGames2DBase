@@ -1,15 +1,11 @@
 #include "../include/GameApp.h"
-#include "../include/GameWindow.h"
-#include "../include/VkSetup.h"
 
 int main()
 {
     try {
-        VkSetup vulkan;
         GameApp game_app;
-        GameWindow game_window;
 
-        game_app.Run(game_window, vulkan);
+        game_app.Run();
         std::cout << "Finished\n";
     }
     catch (const std::exception& e) {

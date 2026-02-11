@@ -4,10 +4,11 @@
 #include "../include/CustomPD.h"
 #include "CustomVkStructs.h"
 #include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan_core.h>
 
-bool CustomPD::SetUpPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance){
+bool CustomPD::SetUpPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance, const std::unique_ptr<CustomSurface>& surface){
 
-    return SelectPhysicalDevice(vk_instance) && (FindQueueFamilies() != mNoGraphicsQueue);
+    return SelectPhysicalDevice(vk_instance) && (FindQueueFamilies(surface));
 }
 
 bool CustomPD::SelectPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance) {
@@ -92,12 +93,12 @@ bool CustomPD::DeviceTypeSuitable(const vk::raii::PhysicalDevice& device) {
     return deviceProperties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu || deviceProperties.deviceType == vk::PhysicalDeviceType::eIntegratedGpu;
 }
 
-uint32_t CustomPD::FindQueueFamilies(){
+bool CustomPD::FindQueueFamilies(const std::unique_ptr<CustomSurface>& surface){
 
     if(!mPhysicalDevice)
     {
         std::cerr << "No Device Available\n";
-        return mNoGraphicsQueue;
+        return false;
     }
 
     const std::vector<vk::QueueFamilyProperties>& deviceQueueFamilies = mPhysicalDevice->getQueueFamilyProperties();
@@ -108,10 +109,28 @@ uint32_t CustomPD::FindQueueFamilies(){
         {
             std::cout << "Graphics Queue Families found\n";
             mGraphicsFamilyIndex = queue_index;
-            return mGraphicsFamilyIndex;
+            mGraphicsQueueFound = true;
+        }
+
+        VkBool32 presentSupported = mPhysicalDevice->getSurfaceSupportKHR(queue_index, *surface->GetSurface());
+
+        if(presentSupported)
+        {
+            std::cout << "Present Queue found\n";
+            mPresentFamilyIndex = queue_index;
+            mPresentQueueFound = true;
         }
     }
 
-    std::cerr << "No required Queue Families found\n";
-    return mNoGraphicsQueue;
+    if(!mGraphicsQueueFound)
+    {
+        std::cout << "No Graphics queue found\n";
+    }
+
+    if(!mPresentQueueFound)
+    {
+        std::cout << "No Present queue found\n";
+    }
+
+    return mGraphicsQueueFound && mPresentQueueFound;
 }

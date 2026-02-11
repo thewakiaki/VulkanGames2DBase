@@ -6,7 +6,6 @@
 #define VULKANGAMES2DBASE_GAMEWINDOW_H
 
 
-
 class GameWindow {
 public:
     GameWindow();
@@ -20,7 +19,7 @@ public:
     bool InitGameWindow();
 
 private:
-    GLFWwindow *mGame_window;
+    GLFWwindow* mGame_window;
 
     const char* mGame_Title = "Game Title";
 

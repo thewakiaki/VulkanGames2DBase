@@ -28,6 +28,8 @@ add_executable(VulkanGame
 		include/CustomVkStructs.h
 		include/CustomLD.h
 		source/CustomLD.cpp
+		include/CustomSurface.h
+		source/CustomSurface.cpp
 )
 
 target_precompile_headers(VulkanGame PRIVATE include/pch.h)

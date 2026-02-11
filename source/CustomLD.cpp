@@ -6,14 +6,12 @@ CustomLD::~CustomLD(){
 }
 
 bool CustomLD::CreateDeviceInfo(const CustomPD& device){
+
     vk::DeviceQueueCreateInfo queueCreateInfo;
     const float queuePriority = 1.0f;
     queueCreateInfo.setQueueFamilyIndex(device.GetGraphicsFamilyIndex());
     queueCreateInfo.setQueueCount(1);
     queueCreateInfo.setPQueuePriorities(&queuePriority);
-
-
-
 
     mDeviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 

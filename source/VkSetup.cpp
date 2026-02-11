@@ -3,6 +3,7 @@
 //
 
 #include "../include/VkSetup.h"
+#include "CustomLD.h"
 #include "CustomPD.h"
 #include "vulkan/vulkan.hpp"
 #include <memory>
@@ -40,10 +41,10 @@ bool VkSetup::CreateInstance()
 
 
         mVulkanInstance = std::make_unique<vk::raii::Instance>(mContext, create_info);
-
-        mPhysicalDevice = std::make_unique<CustomPD>();
-
-        mPhysicalDevice->SetUpPhysicalDevice(mVulkanInstance);
+        if(!mVulkanInstance) {
+            std::cerr << "Failed to create VK_INSTANCE\n";
+            return false;
+        }
 
         return true;
     }

@@ -5,6 +5,7 @@
 #ifndef VULKANGAMES2DBASE_VKSETUP_H
 #define VULKANGAMES2DBASE_VKSETUP_H
 #include "CustomPD.h"
+#include "CustomLD.h"
 
 
 class VkSetup
@@ -15,6 +16,8 @@ public:
 
     bool InitVulkan();
 
+    inline const std::unique_ptr<vk::raii::Instance>& GetInstance() const { return mVulkanInstance; }
+
 private:
 
     bool CreateInstance();
@@ -22,7 +25,6 @@ private:
 
     std::unique_ptr<vk::raii::Instance> mVulkanInstance;
     vk::raii::Context mContext;
-    std::unique_ptr<CustomPD> mPhysicalDevice;
 };
 
 
