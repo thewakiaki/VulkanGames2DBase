@@ -2,6 +2,7 @@
 #define PCH_H
 
 #define GLFW_INCLUDE_VULKAN
+#define FAMILY_NOT_FOUND -1
 
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>

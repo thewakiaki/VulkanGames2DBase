@@ -8,13 +8,14 @@ public :
     CustomLD() = default;
     ~CustomLD();
 
-    bool CreateDeviceInfo(const CustomPD& device);
+    bool CreateLogicalDevice(const CustomPD& device);
 
     const std::unique_ptr<vk::raii::Device>& GetLogicalDevice() const { return mLogicalDevice; }
 
 private :
     std::unique_ptr<vk::raii::Device> mLogicalDevice;
     std::unique_ptr<vk::raii::Queue> mGraphicsQueue;
+    std::unique_ptr<vk::raii::Queue> mPresentQueue;
 
     std::vector<const char*> mDeviceExtensions;
 

@@ -3,6 +3,7 @@
 //
 #ifndef VULKANGAMES2DBASE_CUSTOMVKSTRUCTS_H
 #define VULKANGAMES2DBASE_CUSTOMVKSTRUCTS_H
+#include <csignal>
 #include <memory>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_raii.hpp>
@@ -19,6 +20,20 @@ namespace CustomVKStructs {
 
         int score = 0;
         std::unique_ptr<vk::raii::PhysicalDevice> physical_device;
+    };
+
+    enum class RequiredVkFamilies{
+        Graphics = 0,
+        Present = 1,
+    };
+
+    struct VkQueueFamilies{
+        VkQueueFamilies(RequiredVkFamilies type, const char* name = "", uint32_t index = FAMILY_NOT_FOUND, bool found = false) : familyType(type), familyName(name), familyIndex(index), familyFound(found) {}
+
+        RequiredVkFamilies familyType;
+        const char* familyName;
+        uint32_t familyIndex;
+        bool familyFound = false;
     };
 }
 

@@ -30,7 +30,7 @@ bool GameApp::Run()
 
     if(!mPhysicalDevice->SetUpPhysicalDevice(mVkInstance->GetInstance(), mCustomSurface)) { return false; }
 
-    if(!mLogicalDevice->CreateDeviceInfo(*mPhysicalDevice)) { return false; }
+    if(!mLogicalDevice->CreateLogicalDevice(*mPhysicalDevice)) { return false; }
 
     if (!GameStart()) { return false; }
 

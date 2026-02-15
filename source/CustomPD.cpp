@@ -39,7 +39,9 @@ bool CustomPD::SelectPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& v
 
 
     GetMostSuitableDevice();
+
     std::cout << "Most Suitable Device: " << mPhysicalDevice->getProperties().deviceName << "\n";
+
     return true;
 }
 
@@ -103,34 +105,62 @@ bool CustomPD::FindQueueFamilies(const std::unique_ptr<CustomSurface>& surface){
 
     const std::vector<vk::QueueFamilyProperties>& deviceQueueFamilies = mPhysicalDevice->getQueueFamilyProperties();
 
+    //Add required families here
+    mQueueFamilies.emplace_back(CustomVKStructs::RequiredVkFamilies::Graphics, "Graphics");
+    mQueueFamilies.emplace_back(CustomVKStructs::RequiredVkFamilies::Present, "Present");
+
     for(uint32_t queue_index = 0; queue_index < deviceQueueFamilies.size(); ++queue_index)
     {
+        VkBool32 presentSupported = mPhysicalDevice->getSurfaceSupportKHR(queue_index, *surface->GetSurface());
+
         if(deviceQueueFamilies[queue_index].queueFlags & vk::QueueFlagBits::eGraphics)
         {
-            std::cout << "Graphics Queue Families found\n";
-            mGraphicsFamilyIndex = queue_index;
-            mGraphicsQueueFound = true;
+            std::cout << "Graphics Queue found\n";
+            mQueueFamilies[(int)CustomVKStructs::RequiredVkFamilies::Graphics].familyIndex = queue_index;
+            mQueueFamilies[(int)CustomVKStructs::RequiredVkFamilies::Graphics].familyFound = true;
         }
-
-        VkBool32 presentSupported = mPhysicalDevice->getSurfaceSupportKHR(queue_index, *surface->GetSurface());
 
         if(presentSupported)
         {
             std::cout << "Present Queue found\n";
-            mPresentFamilyIndex = queue_index;
-            mPresentQueueFound = true;
+            mQueueFamilies[(int)CustomVKStructs::RequiredVkFamilies::Present].familyIndex = queue_index;
+            mQueueFamilies[(int)CustomVKStructs::RequiredVkFamilies::Present].familyFound = true;
         }
     }
 
-    if(!mGraphicsQueueFound)
+    for(const CustomVKStructs::VkQueueFamilies& families : mQueueFamilies)
     {
-        std::cout << "No Graphics queue found\n";
+        if(!families.familyFound)
+        {
+            std::cerr << "Could not find " << families.familyName << " family\n";
+            return false;
+        }
     }
 
-    if(!mPresentQueueFound)
+    return true;
+}
+
+bool CustomPD::SetupVulkanDeviceFeatures(){
+
+    mVulkan13Features.dynamicRendering = vk::True;
+    mDynamicStateFeatures.extendedDynamicState = vk::True;
+
+    mVulkan13Features.pNext = &mDynamicStateFeatures;
+    mDeviceFeatures.pNext = &mVulkan13Features;
+
+    mDeviceFeatures = mPhysicalDevice->getFeatures2();
+
+    if(!mVulkan13Features.dynamicRendering)
     {
-        std::cout << "No Present queue found\n";
+        std::cerr << "Dynamic Rendering not supported by device\n";
+        return false;
     }
 
-    return mGraphicsQueueFound && mPresentQueueFound;
+    if(!mDynamicStateFeatures.extendedDynamicState)
+    {
+        std::cerr << "Extended Dynamic State not supported by device\n";
+        return false;
+    }
+
+    return true;
 }
