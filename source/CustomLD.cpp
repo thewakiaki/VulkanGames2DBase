@@ -20,7 +20,7 @@ bool CustomLD::CreateLogicalDevice(const CustomPD& device){
     queueCreateInfo.setQueueCount(1);
     queueCreateInfo.setPQueuePriorities(&queuePriority);
 
-    mDeviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+    mDeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
     const std::vector<CustomVKStructs::VkQueueFamilies> queueFamilies = device.GetFamilies();
 

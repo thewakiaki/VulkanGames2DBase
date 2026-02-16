@@ -8,7 +8,11 @@
 
 bool CustomPD::SetUpPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance, const std::unique_ptr<CustomSurface>& surface){
 
-    return SelectPhysicalDevice(vk_instance) && (FindQueueFamilies(surface));
+    if(!SelectPhysicalDevice(vk_instance)) { return false; }
+    if(!FindQueueFamilies(surface)) { return false; };
+    UpdateSurfaceDetails(surface);
+
+    return true;
 }
 
 bool CustomPD::SelectPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance) {
@@ -163,4 +167,11 @@ bool CustomPD::SetupVulkanDeviceFeatures(){
     }
 
     return true;
+}
+
+void CustomPD::UpdateSurfaceDetails(const std::unique_ptr<CustomSurface>& surface) {
+
+    surface->SetCapabilities(mPhysicalDevice);
+    surface->SetFormats(mPhysicalDevice);
+    surface->SetPresentModes(mPhysicalDevice);
 }

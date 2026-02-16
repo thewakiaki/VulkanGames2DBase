@@ -4,9 +4,6 @@
 #include "CustomSurface.h"
 #include "GameWindow.h"
 #include "VkSetup.h"
-#include <GLFW/glfw3.h>
-#include <memory>
-
 
 GameApp::GameApp() {}
 
@@ -29,6 +26,8 @@ bool GameApp::Run()
     if(!mCustomSurface->CreateSurface(mVkInstance->GetInstance(), mGameWindow->GetWindow())) { return false; }
 
     if(!mPhysicalDevice->SetUpPhysicalDevice(mVkInstance->GetInstance(), mCustomSurface)) { return false; }
+
+    if(!mCustomSurface->SetupSurfaceVariables(mGameWindow->GetWindow())) { return false; }
 
     if(!mLogicalDevice->CreateLogicalDevice(*mPhysicalDevice)) { return false; }
 

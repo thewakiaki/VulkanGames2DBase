@@ -7,10 +7,6 @@
 
 #include "CustomSurface.h"
 #include "CustomVkStructs.h"
-#include "pch.h"
-#include "vulkan/vulkan.hpp"
-#include <cstdint>
-#include <vector>
 
 class CustomPD {
 public:
@@ -28,12 +24,14 @@ public:
 private:
     void ScoreDevice(vk::raii::PhysicalDevice device);
     void GetMostSuitableDevice();
+    void UpdateSurfaceDetails(const std::unique_ptr<CustomSurface>& surface);
 
     bool SelectPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance);
     bool DeviceTypeSuitable(const vk::raii::PhysicalDevice& device);
     bool DeviceFeaturesSuitable(const std::unique_ptr<vk::raii::PhysicalDevice>& device);
     bool FindQueueFamilies(const std::unique_ptr<CustomSurface>& surface);
     bool SetupVulkanDeviceFeatures();
+
 
     std::unique_ptr<vk::raii::PhysicalDevice> mPhysicalDevice;
 
