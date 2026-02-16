@@ -1,11 +1,7 @@
-#include "../include/Swapchain.h"
+#include "../include/CustomSC.h"
 #include "CustomVkStructs.h"
-#include "vulkan/vulkan.hpp"
-#include <cstdint>
-#include <memory>
-#include <vulkan/vulkan_raii.hpp>
 
-bool Swapchain::CreateSwapchain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice){
+bool CustomSC::CreateSwapchain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice){
 
     mSwapChainSurfaceFormat = surface->GetChosenFormat();
     mSwapChainExtent = surface->GetChosenExtent();
@@ -43,7 +39,7 @@ bool Swapchain::CreateSwapchain(GLFWwindow* window,const std::unique_ptr<CustomS
     }
 }
 
-void Swapchain::CreateSwapInfo(vk::SwapchainCreateInfoKHR& info, const std::unique_ptr<CustomSurface>& surface)
+void CustomSC::CreateSwapInfo(vk::SwapchainCreateInfoKHR& info, const std::unique_ptr<CustomSurface>& surface)
 {
     info.setFlags(vk::SwapchainCreateFlagsKHR());
     info.setSurface(*surface->GetSurface());
@@ -61,7 +57,7 @@ void Swapchain::CreateSwapInfo(vk::SwapchainCreateInfoKHR& info, const std::uniq
     info.setOldSwapchain(nullptr);
 }
 
-void Swapchain::SetQueueFamilies(const std::unique_ptr<CustomPD>& pDevice, vk::SwapchainCreateInfoKHR& info){
+void CustomSC::SetQueueFamilies(const std::unique_ptr<CustomPD>& pDevice, vk::SwapchainCreateInfoKHR& info){
 
     uint32_t graphicsIndex;
     uint32_t presentIndex;

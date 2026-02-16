@@ -7,19 +7,21 @@
 #include "CustomPD.h"
 #include "CustomSurface.h"
 #include "vulkan/vulkan.hpp"
-#include <cstdint>
-#include <memory>
-#include <vulkan/vulkan_core.h>
-class Swapchain {
+
+class CustomSC {
 public:
 
     bool CreateSwapchain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,
                          const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice);
 
-    void CreateSwapInfo(vk::SwapchainCreateInfoKHR& info, const std::unique_ptr<CustomSurface>& surface);
-    void SetQueueFamilies(const std::unique_ptr<CustomPD>& pDevice, vk::SwapchainCreateInfoKHR& info);
+    inline const std::unique_ptr<vk::raii::SwapchainKHR>& GetSwapchain() const { return mSwapChain; }
+    inline const std::vector<vk::Image>& GetImages() const { return mSwapChainImages; }
+    inline const vk::SurfaceFormatKHR& GetFormat() const { return mSwapChainSurfaceFormat; }
+
 
 private:
+    void CreateSwapInfo(vk::SwapchainCreateInfoKHR& info, const std::unique_ptr<CustomSurface>& surface);
+    void SetQueueFamilies(const std::unique_ptr<CustomPD>& pDevice, vk::SwapchainCreateInfoKHR& info);
 
     std::unique_ptr<vk::raii::SwapchainKHR> mSwapChain;
 

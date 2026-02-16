@@ -1,10 +1,7 @@
 #ifndef CUSTOM_SURFACE_H
 #define CUSTOM_SURFACE_H
 
-#include "vulkan/vulkan.hpp"
-#include <memory>
-#include <vector>
-#include <vulkan/vulkan_raii.hpp>
+
 class CustomSurface{
     public :
         bool CreateSurface(const std::unique_ptr<vk::raii::Instance>& vkInstance, GLFWwindow* window);

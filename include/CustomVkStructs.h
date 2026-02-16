@@ -3,10 +3,6 @@
 //
 #ifndef VULKANGAMES2DBASE_CUSTOMVKSTRUCTS_H
 #define VULKANGAMES2DBASE_CUSTOMVKSTRUCTS_H
-#include <csignal>
-#include <memory>
-#include <vulkan/vulkan_core.h>
-#include <vulkan/vulkan_raii.hpp>
 
 
 
