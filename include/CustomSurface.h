@@ -15,10 +15,14 @@ class CustomSurface{
 
         bool SetupSurfaceVariables(GLFWwindow* window);
 
-        inline const vk::SurfaceCapabilitiesKHR& GetCapablilties() const { return mSurfaceCapabilities; }
+        inline const vk::SurfaceCapabilitiesKHR& GetCapabilities() const { return mSurfaceCapabilities; }
         inline const std::vector<vk::SurfaceFormatKHR>& GetAvailableFormats() const { return mAvailableFormats; }
         inline const std::vector<vk::PresentModeKHR>& GetPresentModes() const { return mAvailablePresentModes; }
         inline const std::unique_ptr<vk::raii::SurfaceKHR>& GetSurface() const { return mSurface; }
+
+        inline const vk::SurfaceFormatKHR GetChosenFormat() const { return mSurfaceFormat; }
+        inline const vk::Extent2D GetChosenExtent() const { return mSurfaceExtent; }
+        inline const vk::PresentModeKHR GetChosenPresentMode() const { return mPresentMode; }
 
     private :
         bool SelectSurfaceFormat();

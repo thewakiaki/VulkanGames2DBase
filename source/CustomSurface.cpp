@@ -73,9 +73,9 @@ bool CustomSurface::SelectPresentMode(){
 
 bool CustomSurface::SetupSurfaceCapabilities(GLFWwindow* window){
 
-    if (mSurfaceCapabilities.minImageCount == 0) {
+    if (mSurfaceCapabilities.minImageExtent.width == 0 || mSurfaceCapabilities.minImageExtent.height == 0) {
 
-        std::cerr << "No extent values available\n";
+        std::cerr << "Invalid Surface Extent\n";
         return false;
     }
 

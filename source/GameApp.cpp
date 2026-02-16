@@ -3,6 +3,7 @@
 #include "CustomPD.h"
 #include "CustomSurface.h"
 #include "GameWindow.h"
+#include "Swapchain.h"
 #include "VkSetup.h"
 
 GameApp::GameApp() {}
@@ -30,6 +31,8 @@ bool GameApp::Run()
     if(!mCustomSurface->SetupSurfaceVariables(mGameWindow->GetWindow())) { return false; }
 
     if(!mLogicalDevice->CreateLogicalDevice(*mPhysicalDevice)) { return false; }
+
+    if(!mSwapChain->CreateSwapchain(mGameWindow->GetWindow(), mCustomSurface, mPhysicalDevice, mLogicalDevice)) { return false; }
 
     if (!GameStart()) { return false; }
 
@@ -80,5 +83,5 @@ void GameApp::InitEngineComponents(){
     mCustomSurface = std::make_unique<CustomSurface>();
     mPhysicalDevice = std::make_unique<CustomPD>();
     mLogicalDevice = std::make_unique<CustomLD>();
-
+    mSwapChain = std::make_unique<Swapchain>();
 }

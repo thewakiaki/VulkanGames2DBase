@@ -31,6 +31,7 @@ add_executable(VulkanGame
 		include/CustomSurface.h
 		source/CustomSurface.cpp
 		include/Swapchain.h
+		source/Swapchain.cpp
 )
 
 target_precompile_headers(VulkanGame PRIVATE include/pch.h)

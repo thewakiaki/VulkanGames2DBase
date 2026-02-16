@@ -2,6 +2,7 @@
 #define VKSETUP_H
 
 #include "CustomSurface.h"
+#include "Swapchain.h"
 #include <memory>
 #include <vulkan/vulkan_raii.hpp>
 #define GLFW_INCLUDE_VULKAN
@@ -36,7 +37,7 @@ private:
     std::unique_ptr<CustomLD> mLogicalDevice;
     std::unique_ptr<GameWindow> mGameWindow;
     std::unique_ptr<CustomSurface> mCustomSurface;
-
+    std::unique_ptr<Swapchain> mSwapChain;
 };
 
 #endif // VKSETUP_H

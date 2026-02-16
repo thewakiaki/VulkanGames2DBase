@@ -10,7 +10,9 @@ public :
 
     bool CreateLogicalDevice(const CustomPD& device);
 
-    const std::unique_ptr<vk::raii::Device>& GetLogicalDevice() const { return mLogicalDevice; }
+    inline const std::unique_ptr<vk::raii::Device>& GetLogicalDevice() const { return mLogicalDevice; }
+    inline const std::unique_ptr<vk::raii::Queue>& GetGraphicsQueue() const { return mGraphicsQueue;}
+    inline const std::unique_ptr<vk::raii::Queue>& GetPresentQueue() const { return mPresentQueue;}
 
 private :
     std::unique_ptr<vk::raii::Device> mLogicalDevice;
