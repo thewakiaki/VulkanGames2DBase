@@ -35,6 +35,8 @@ bool GameApp::Run()
 
     if(!mGraphicsPipeline->SetupShaders()) { return false; }
 
+    if(!mGraphicsPipeline->CreatePipeline(mSwapChain)) { return false; }
+
     if (!GameStart()) { return false; }
 
     GamePlaying();

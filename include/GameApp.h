@@ -1,7 +1,7 @@
 #ifndef VKSETUP_H
 #define VKSETUP_H
 
-#include "CustomSM.h"
+
 #include "CustomSurface.h"
 #include "CustomSC.h"
 #include "GameWindow.h"
@@ -10,8 +10,7 @@
 #include "CustomPD.h"
 #include "CustomLD.h"
 #include "CustomIV.h"
-#include <algorithm>
-#include <memory>
+
 
 class GameApp
 {

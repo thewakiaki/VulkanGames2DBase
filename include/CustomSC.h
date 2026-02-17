@@ -17,6 +17,7 @@ public:
     inline const std::unique_ptr<vk::raii::SwapchainKHR>& GetSwapchain() const { return mSwapChain; }
     inline const std::vector<vk::Image>& GetImages() const { return mSwapChainImages; }
     inline const vk::SurfaceFormatKHR& GetFormat() const { return mSwapChainSurfaceFormat; }
+    inline const vk::Extent2D& GetExtent() const { return mSwapChainExtent; };
 
 
 private:

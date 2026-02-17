@@ -20,5 +20,6 @@
 #include <array>
 #include <ios>
 #include <fstream>
+#include <functional>
 
 #endif // PCH_H
