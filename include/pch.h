@@ -18,5 +18,7 @@
 #include <map>
 #include <vector>
 #include <array>
+#include <ios>
+#include <fstream>
 
 #endif // PCH_H

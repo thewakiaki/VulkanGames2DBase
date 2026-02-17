@@ -34,6 +34,12 @@ add_executable(VulkanGame
 		source/CustomSC.cpp
 		include/CustomIV.h
 		source/CustomIV.cpp
+		include/CustomSM.h
+		source/CustomSM.cpp
+		include/FileUtility.h
+		source/FileUtility.cpp
+		include/GraphicsPipeline.h
+		source/GraphicsPipeline.cpp
 )
 
 target_precompile_headers(VulkanGame PRIVATE include/pch.h)

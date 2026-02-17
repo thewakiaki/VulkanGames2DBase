@@ -1,4 +1,6 @@
 #include "../include/GameApp.h"
+#include "GraphicsPipeline.h"
+#include <memory>
 
 
 GameApp::GameApp() {}
@@ -30,6 +32,8 @@ bool GameApp::Run()
     if(!mSwapChain->CreateSwapchain(mGameWindow->GetWindow(), mCustomSurface, mPhysicalDevice, mLogicalDevice)) { return false; }
 
     if(!mImageView->CreateImageViews(mSwapChain, mLogicalDevice)) { return false; }
+
+    if(!mGraphicsPipeline->SetupShaders()) { return false; }
 
     if (!GameStart()) { return false; }
 
@@ -82,4 +86,5 @@ void GameApp::InitEngineComponents(){
     mLogicalDevice = std::make_unique<CustomLD>();
     mSwapChain = std::make_unique<CustomSC>();
     mImageView = std::make_unique<CustomIV>();
+    mGraphicsPipeline = std::make_unique<GraphicsPipeline>(*mLogicalDevice);
 }
