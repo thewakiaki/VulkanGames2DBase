@@ -1,5 +1,9 @@
 #include "../include/CustomSC.h"
 #include "CustomVkStructs.h"
+#include "vulkan/vulkan.hpp"
+#include <memory>
+#include <vector>
+#include <vulkan/vulkan_raii.hpp>
 
 bool CustomSC::CreateSwapchain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice){
 
@@ -86,4 +90,30 @@ void CustomSC::SetQueueFamilies(const std::unique_ptr<CustomPD>& pDevice, vk::Sw
 
     std::cout << "Concurrent mode not needed keeping exclusive mode\n";
 
+}
+
+bool CustomSC::CreateImageViews(const std::unique_ptr<CustomLD>& lDevice){
+
+    mSwapChainImageViews.clear();
+
+    vk::ImageViewCreateInfo imageViewInfo;
+
+    imageViewInfo.setViewType(vk::ImageViewType::e2D);
+    imageViewInfo.setFormat(mSwapChainSurfaceFormat.format);
+    imageViewInfo.setSubresourceRange({vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1});
+
+    try {
+
+        for (const vk::Image& image : mSwapChainImages) {
+            imageViewInfo.setImage(image);
+            mSwapChainImageViews.emplace_back(std::make_unique<vk::raii::ImageView>(*lDevice->GetLogicalDevice(), imageViewInfo));
+        }
+
+        std::cout << "Created Image Views\n";
+
+        return true;
+    } catch (const vk::SystemError& err) {
+        std::cerr << "Failed to Create Image Views\n";
+        return false;
+    }
 }

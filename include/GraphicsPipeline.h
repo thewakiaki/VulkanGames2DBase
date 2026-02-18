@@ -16,6 +16,8 @@ public:
     bool SetupShaders();
     bool CreatePipeline(const std::unique_ptr<CustomSC>& swapchain);
 
+    inline const std::unique_ptr<vk::raii::Pipeline>& GetGraphicsPipeline() const { return mGraphicsPipeline; }
+
 
 private:
     void SetPipelineShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, vk::ShaderStageFlagBits shaderType, std::unique_ptr<CustomSM>& shader);

@@ -1,4 +1,5 @@
 #include "../include/GameApp.h"
+#include "CommandBuffer.h"
 #include "GraphicsPipeline.h"
 #include <memory>
 
@@ -31,11 +32,17 @@ bool GameApp::Run()
 
     if(!mSwapChain->CreateSwapchain(mGameWindow->GetWindow(), mCustomSurface, mPhysicalDevice, mLogicalDevice)) { return false; }
 
+    if(!mSwapChain->CreateImageViews(mLogicalDevice)) { return false; }
+
     if(!mImageView->CreateImageViews(mSwapChain, mLogicalDevice)) { return false; }
 
     if(!mGraphicsPipeline->SetupShaders()) { return false; }
 
     if(!mGraphicsPipeline->CreatePipeline(mSwapChain)) { return false; }
+
+    if(!mCommandPool->CreateCommandPool(mPhysicalDevice, mLogicalDevice)) { return false; }
+
+    if(!mCommandPool->CreateCommandBuffer(mLogicalDevice)) { return false; }
 
     if (!GameStart()) { return false; }
 
@@ -89,4 +96,5 @@ void GameApp::InitEngineComponents(){
     mSwapChain = std::make_unique<CustomSC>();
     mImageView = std::make_unique<CustomIV>();
     mGraphicsPipeline = std::make_unique<GraphicsPipeline>(*mLogicalDevice);
+    mCommandPool = std::make_unique<CmdBuffer>(mGraphicsPipeline);
 }

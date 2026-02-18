@@ -7,6 +7,7 @@
 #include "CustomPD.h"
 #include "CustomSurface.h"
 #include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan_raii.hpp>
 
 class CustomSC {
 public:
@@ -14,8 +15,11 @@ public:
     bool CreateSwapchain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,
                          const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice);
 
+    bool CreateImageViews(const std::unique_ptr<CustomLD>& lDevice);
+
     inline const std::unique_ptr<vk::raii::SwapchainKHR>& GetSwapchain() const { return mSwapChain; }
     inline const std::vector<vk::Image>& GetImages() const { return mSwapChainImages; }
+    inline const std::vector<std::unique_ptr<vk::raii::ImageView>>& GetImageViews() const { return mSwapChainImageViews;}
     inline const vk::SurfaceFormatKHR& GetFormat() const { return mSwapChainSurfaceFormat; }
     inline const vk::Extent2D& GetExtent() const { return mSwapChainExtent; };
 
@@ -27,6 +31,7 @@ private:
     std::unique_ptr<vk::raii::SwapchainKHR> mSwapChain;
 
     std::vector<vk::Image> mSwapChainImages;
+    std::vector<std::unique_ptr<vk::raii::ImageView>> mSwapChainImageViews;
 
     vk::SurfaceFormatKHR mSwapChainSurfaceFormat;
     vk::Extent2D mSwapChainExtent;

@@ -40,6 +40,8 @@ add_executable(VulkanGame
 		source/FileUtility.cpp
 		include/GraphicsPipeline.h
 		source/GraphicsPipeline.cpp
+		include/CommandBuffer.h
+		source/CommandBuffer.cpp
 )
 
 target_precompile_headers(VulkanGame PRIVATE include/pch.h)

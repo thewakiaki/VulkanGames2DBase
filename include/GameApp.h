@@ -10,6 +10,8 @@
 #include "CustomPD.h"
 #include "CustomLD.h"
 #include "CustomIV.h"
+#include "CommandBuffer.h"
+#include <memory>
 
 
 class GameApp
@@ -40,6 +42,7 @@ private:
     std::unique_ptr<CustomSC> mSwapChain;
     std::unique_ptr<CustomIV> mImageView;
     std::unique_ptr<GraphicsPipeline> mGraphicsPipeline;
+    std::unique_ptr<CmdBuffer> mCommandPool;
 
 };
 
