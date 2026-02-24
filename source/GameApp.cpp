@@ -1,7 +1,17 @@
 #include "../include/GameApp.h"
-#include "CommandBuffer.h"
-#include "GraphicsPipeline.h"
-#include <memory>
+#include <iostream>
+#include <GLFW/glfw3.h>
+
+#include <GameWindow.h>
+#include <VkSetup.h>
+#include <CustomSurface.h>
+#include <CustomPD.h>
+#include <CustomLD.h>
+#include <CustomSC.h>
+#include <CustomIV.h>
+#include <GraphicsPipeline.h>
+#include <CommandBuffer.h>
+#include <Renderer.h>
 
 
 GameApp::GameApp() {}
@@ -44,6 +54,8 @@ bool GameApp::Run()
 
     if(!mCommandPool->CreateCommandBuffer(mLogicalDevice)) { return false; }
 
+    if(!mRenderer->CreateSyncObjects(mLogicalDevice)) { return false; }
+
     if (!GameStart()) { return false; }
 
     GamePlaying();
@@ -70,10 +82,13 @@ bool GameApp::GamePlaying()
     while (!glfwWindowShouldClose(mGameWindow->GetWindow()))
     {
         glfwPollEvents();
+        mRenderer->DrawFrame(mLogicalDevice, mSwapChain, mCommandPool, mGraphicsPipeline);
 
         if (glfwGetKey(mGameWindow->GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
                   glfwSetWindowShouldClose(mGameWindow->GetWindow(), true);
               }
+
+        mLogicalDevice->GetLogicalDevice()->waitIdle();
     }
 
     GameEnd();
@@ -97,4 +112,5 @@ void GameApp::InitEngineComponents(){
     mImageView = std::make_unique<CustomIV>();
     mGraphicsPipeline = std::make_unique<GraphicsPipeline>(*mLogicalDevice);
     mCommandPool = std::make_unique<CmdBuffer>(mGraphicsPipeline);
+    mRenderer = std::make_unique<Renderer>(mSwapChain);
 }

@@ -1,18 +1,18 @@
-#ifndef VKSETUP_H
-#define VKSETUP_H
+#ifndef GAME_APP_H
+#define GAME_APP_H
 
-
-#include "CustomSurface.h"
-#include "CustomSC.h"
-#include "GameWindow.h"
-#include "GraphicsPipeline.h"
-#include "VkSetup.h"
-#include "CustomPD.h"
-#include "CustomLD.h"
-#include "CustomIV.h"
-#include "CommandBuffer.h"
 #include <memory>
 
+#include "GameWindow.h"
+#include "VkSetup.h"
+#include "CustomSurface.h"
+#include "CustomPD.h"
+#include "CustomLD.h"
+#include "CustomSC.h"
+#include "CustomIV.h"
+#include "GraphicsPipeline.h"
+#include "CommandBuffer.h"
+#include "Renderer.h"
 
 class GameApp
 {
@@ -43,7 +43,8 @@ private:
     std::unique_ptr<CustomIV> mImageView;
     std::unique_ptr<GraphicsPipeline> mGraphicsPipeline;
     std::unique_ptr<CmdBuffer> mCommandPool;
+    std::unique_ptr<Renderer> mRenderer;
 
 };
 
-#endif // VKSETUP_H
+#endif // GAME_APP_H

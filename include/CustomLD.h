@@ -14,6 +14,8 @@ public :
     inline const std::unique_ptr<vk::raii::Queue>& GetGraphicsQueue() const { return mGraphicsQueue;}
     inline const std::unique_ptr<vk::raii::Queue>& GetPresentQueue() const { return mPresentQueue;}
 
+    inline const vk::Queue GetRawGraphicsQueue() const { return *mGraphicsQueue; }
+
 private :
     std::unique_ptr<vk::raii::Device> mLogicalDevice;
     std::unique_ptr<vk::raii::Queue> mGraphicsQueue;

@@ -18,9 +18,11 @@ public:
     void BeginRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex);
     void BindToGraphicsPipeline();
     void EndRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex);
+    void RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex, const std::unique_ptr<GraphicsPipeline>& pipeline);
+
+    inline const std::unique_ptr<vk::raii::CommandBuffer>& GetCommandBuffer() const { return mCommandBuffer; }
 
 private:
-    void RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex, const std::unique_ptr<GraphicsPipeline>& pipeline);
     void TransitionImageLayout(uint32_t imageIndex, const std::unique_ptr<CustomSC>& swapchain, vk::ImageLayout oldLayout, vk::ImageLayout newLayout,
                                vk::AccessFlags2 srcAccessMask, vk::AccessFlags2 dstAccessMask, vk::PipelineStageFlags2 srcStageMask,
                                vk::PipelineStageFlags2 dstStageMask);

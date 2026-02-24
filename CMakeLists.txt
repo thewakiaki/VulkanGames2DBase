@@ -42,9 +42,16 @@ add_executable(VulkanGame
 		source/GraphicsPipeline.cpp
 		include/CommandBuffer.h
 		source/CommandBuffer.cpp
+		include/Renderer.h
+		source/Renderer.cpp
 )
 
 target_precompile_headers(VulkanGame PRIVATE include/pch.h)
+
+target_compile_definitions(VulkanGame PRIVATE
+    VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1
+    VK_NO_PROTOTYPES=1
+)
 
 target_compile_features(VulkanGame PRIVATE cxx_std_17)
 

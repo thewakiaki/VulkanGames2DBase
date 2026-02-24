@@ -122,6 +122,13 @@ bool CustomPD::FindQueueFamilies(const std::unique_ptr<CustomSurface>& surface){
             std::cout << "Graphics Queue found\n";
             mQueueFamilies[(int)CustomVKStructs::RequiredVkFamilies::Graphics].familyIndex = queue_index;
             mQueueFamilies[(int)CustomVKStructs::RequiredVkFamilies::Graphics].familyFound = true;
+
+            if(presentSupported)
+            {
+                mQueueFamilies[(int)CustomVKStructs::RequiredVkFamilies::Present].familyIndex = queue_index;
+                mQueueFamilies[(int)CustomVKStructs::RequiredVkFamilies::Present].familyFound = true;
+                break;
+            }
         }
 
         if(presentSupported)

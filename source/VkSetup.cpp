@@ -3,12 +3,6 @@
 //
 
 #include "../include/VkSetup.h"
-#include "CustomLD.h"
-#include "CustomPD.h"
-#include "vulkan/vulkan.hpp"
-#include <memory>
-#include <vulkan/vulkan_core.h>
-#include <vulkan/vulkan_raii.hpp>
 
 
 bool VkSetup::InitVulkan()

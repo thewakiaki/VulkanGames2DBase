@@ -4,8 +4,8 @@
 
 #ifndef VULKANGAMES2DBASE_VKSETUP_H
 #define VULKANGAMES2DBASE_VKSETUP_H
-#include "CustomPD.h"
-#include "CustomLD.h"
+#include "pch.h"
+
 
 
 class VkSetup

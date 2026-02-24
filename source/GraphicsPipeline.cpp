@@ -15,7 +15,7 @@ bool GraphicsPipeline::SetupShaders(){
         return false;
     };
 
-    std::cout << "Succesfully created vertex shader module\n";
+    std::cout << "Succesfully created vertex shader module for\n";
 
     if(!mFragShader->CreateShaderModule(mLogicalDevice, "../shaders/triangle.frag.spv"))
     {
@@ -87,13 +87,9 @@ void GraphicsPipeline::SetPipelineDynamicCreateInfo(vk::PipelineDynamicStateCrea
 void GraphicsPipeline::SetPipelineVertInputCreateInfo(vk::PipelineVertexInputStateCreateInfo& info){
 
     //glsl used so no buffer needed
-    vk::VertexInputBindingDescription binding = {0, 0, vk::VertexInputRate::eVertex };
 
-    //uncomment and set attribute if buffer is used
-    //vk::VertexInputAttributeDescription attribute = {};
-
-    info.setVertexBindingDescriptions(binding);
-    info.setVertexAttributeDescriptions({});
+    info.setVertexBindingDescriptions(nullptr);
+    info.setVertexAttributeDescriptions(nullptr);
 }
 
 void GraphicsPipeline::SetPipelineInputAssemblyCreateInfo(vk::PipelineInputAssemblyStateCreateInfo& info){
@@ -107,8 +103,8 @@ void GraphicsPipeline::SetPipelineRasterCreateInfo(vk::PipelineRasterizationStat
     info.setDepthClampEnable(vk::False);
     info.setRasterizerDiscardEnable(vk::False);
     info.setPolygonMode(vk::PolygonMode::eFill);
-    info.setCullMode(vk::CullModeFlagBits::eBack);
-    info.setFrontFace(vk::FrontFace::eClockwise);
+    info.setCullMode(vk::CullModeFlagBits::eNone);
+    info.setFrontFace(vk::FrontFace::eCounterClockwise);
     info.setDepthBiasEnable(vk::False);
     info.setDepthBiasSlopeFactor(1.0f);
     info.setLineWidth(1.0f);
@@ -124,7 +120,7 @@ void GraphicsPipeline::SetPipelineColorBlendCreateInfo(vk::PipelineColorBlendSta
 
     vk::PipelineColorBlendAttachmentState attachment{};
 
-    attachment.setBlendEnable(vk::True);
+    attachment.setBlendEnable(vk::False);
     attachment.setSrcColorBlendFactor(vk::BlendFactor::eSrcAlpha);
     attachment.setDstColorBlendFactor(vk::BlendFactor::eOneMinusSrcAlpha);
     attachment.setColorBlendOp(vk::BlendOp::eAdd);

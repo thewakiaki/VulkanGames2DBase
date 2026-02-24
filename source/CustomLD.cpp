@@ -4,6 +4,8 @@
 #include "vulkan/vulkan.hpp"
 #include <cstdint>
 #include <vector>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_hpp_macros.hpp>
 
 CustomLD::~CustomLD(){
 
@@ -20,20 +22,34 @@ bool CustomLD::CreateLogicalDevice(const CustomPD& device){
     queueCreateInfo.setQueueCount(1);
     queueCreateInfo.setPQueuePriorities(&queuePriority);
 
-    mDeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+    mDeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME, VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME };
 
     const std::vector<CustomVKStructs::VkQueueFamilies> queueFamilies = device.GetFamilies();
 
     vk::DeviceCreateInfo deviceCreateInfo;
-    vk::DeviceQueueCreateInfo deviceQueueInfos[queueFamilies.size()];
+
+    std::vector<vk::DeviceQueueCreateInfo> deviceQueueInfos;
 
     //to enable more vk features set up feature chain and set pnext to point to this
+    vk::PhysicalDeviceDynamicRenderingFeaturesKHR dynamicFeatures{};
+    dynamicFeatures.setDynamicRendering(true);
 
-    //Always set graphics family first (int)CustomVKStructs::RequiredVkFamilies::Graphics this should always be 0
-    //as graphics is always first family to look for
-    deviceQueueInfos[0].setQueueFamilyIndex(device.GetFamilies()[(int)CustomVKStructs::RequiredVkFamilies::Graphics].familyIndex);
-    deviceQueueInfos[0].setQueueCount(1);
-    deviceQueueInfos[0].setPQueuePriorities(&queuePriority);
+    vk::PhysicalDeviceSynchronization2FeaturesKHR sync2Features{};
+    sync2Features.setSynchronization2(true);
+    sync2Features.setPNext(&dynamicFeatures);
+
+
+    vk::PhysicalDeviceFeatures2 features{};
+    features.setPNext(&sync2Features);
+
+    deviceCreateInfo.setPNext(&features);
+
+
+    vk::DeviceQueueCreateInfo graphicsQueueInfo{};
+    graphicsQueueInfo.setQueueFamilyIndex(device.GetFamilies()[(int)CustomVKStructs::RequiredVkFamilies::Graphics].familyIndex);
+    graphicsQueueInfo.setQueueCount(1);
+    graphicsQueueInfo.setPQueuePriorities(&queuePriority);
+    deviceQueueInfos.emplace_back(graphicsQueueInfo);
 
     int queuesAdded = 1;
 
@@ -51,10 +67,13 @@ bool CustomLD::CreateLogicalDevice(const CustomPD& device){
 
     deviceCreateInfo.enabledExtensionCount = mDeviceExtensions.size();
     deviceCreateInfo.ppEnabledExtensionNames = mDeviceExtensions.data();
+    deviceCreateInfo.setQueueCreateInfoCount(queuesAdded);
+    deviceCreateInfo.setPQueueCreateInfos(deviceQueueInfos.data());
 
     try {
         mLogicalDevice = std::make_unique<vk::raii::Device>(*device.GetPhysicalDevice(), deviceCreateInfo);
         std::cout << "Logical Device Created\n";
+
         mGraphicsQueue = std::make_unique<vk::raii::Queue>(*mLogicalDevice, graphicsFamily, 0);
         mPresentQueue = std::make_unique<vk::raii::Queue>(*mLogicalDevice, presentFamily, 0);
 

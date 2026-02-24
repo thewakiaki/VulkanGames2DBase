@@ -7,6 +7,7 @@
 #include "CustomPD.h"
 #include "CustomSurface.h"
 #include "vulkan/vulkan.hpp"
+#include <cstddef>
 #include <vulkan/vulkan_raii.hpp>
 
 class CustomSC {
@@ -38,6 +39,8 @@ private:
 
     uint32_t mSwapMinImageCount;
     uint32_t mSwapImageCount;
+
+    size_t mImageIndex;
 
 };
 

@@ -60,6 +60,7 @@ bool CmdBuffer::CreateCommandBuffer(const std::unique_ptr<CustomLD>& lDevice){
 }
 
 void CmdBuffer::RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex, const std::unique_ptr<GraphicsPipeline>& pipeline){
+    mCommandBuffer->reset(vk::CommandBufferResetFlagBits::eReleaseResources);
 
     mCommandBuffer->begin({});
 
@@ -120,7 +121,7 @@ void CmdBuffer::TransitionImageLayout(uint32_t imageIndex, const std::unique_ptr
 
 void CmdBuffer::BeginRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex){
 
-    vk::ClearColorValue clearColor = vk::ClearColorValue(0.0f, 0.0f, 0.0f, 1.0f);
+    vk::ClearColorValue clearColor = vk::ClearColorValue(0.025f, 0.025f, 0.025f, 1.0f);
 
     vk::RenderingAttachmentInfo  attachmentInfo;
     attachmentInfo.setImageView(*swapchain->GetImageViews()[imageIndex]);
