@@ -20,7 +20,8 @@ public:
 
 
 private:
-    void SetPipelineShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, vk::ShaderStageFlagBits shaderType, std::unique_ptr<CustomSM>& shader);
+    void SetPipelineVertShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, std::unique_ptr<CustomSM>& shader);
+    void SetPipelineFragShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, std::unique_ptr<CustomSM>& shader);
     void SetPipelineDynamicCreateInfo(vk::PipelineDynamicStateCreateInfo& info);
     void SetPipelineVertInputCreateInfo(vk::PipelineVertexInputStateCreateInfo& info);
     void SetPipelineInputAssemblyCreateInfo(vk::PipelineInputAssemblyStateCreateInfo& info);

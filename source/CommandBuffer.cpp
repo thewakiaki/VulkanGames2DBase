@@ -2,10 +2,6 @@
 #include "CustomVkStructs.h"
 #include "GraphicsPipeline.h"
 #include "vulkan/vulkan.hpp"
-#include <cstdint>
-#include <memory>
-#include <vulkan/vulkan_core.h>
-#include <vulkan/vulkan_raii.hpp>
 
 
 bool CmdBuffer::CreateCommandPool(const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice){
@@ -145,6 +141,7 @@ void CmdBuffer::BindToGraphicsPipeline(){
 }
 
 void CmdBuffer::SetViewportScissor(const std::unique_ptr<CustomSC>& swapchain){
+
     mCommandBuffer->setViewport(0, vk::Viewport(0.0f, 0.0f, (float)swapchain->GetExtent().width, (float)swapchain->GetExtent().height, 0.0f, 1.0f));
     mCommandBuffer->setScissor(0, vk::Rect2D{vk::Offset2D(0, 0), swapchain->GetExtent()});
 }

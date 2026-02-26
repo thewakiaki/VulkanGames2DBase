@@ -85,7 +85,9 @@ void Renderer::DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::un
 
     SubmitBuffer(cmdBuffer, lDevice);
 
-    Present(swapchain, lDevice, imageIndex);
+    vk::Result presentResult = Present(swapchain, lDevice, imageIndex);
+
+    lDevice->GetLogicalDevice()->waitIdle();
 }
 
 void Renderer::SubmitBuffer(const std::unique_ptr<CmdBuffer>& cmdBuffer, const std::unique_ptr<CustomLD>& lDevice){
@@ -104,11 +106,10 @@ void Renderer::SubmitBuffer(const std::unique_ptr<CmdBuffer>& cmdBuffer, const s
     submitInfo.setSignalSemaphoreCount(1);
     submitInfo.setPSignalSemaphores(signalSemaphore);  // Signal for present
 
-
     lDevice->GetGraphicsQueue()->submit(submitInfo, *mDrawFence);
 }
 
-void Renderer::Present(const std::unique_ptr<CustomSC>& swapchain, const std::unique_ptr<CustomLD>& lDevice, uint32_t imageIndex){
+vk::Result Renderer::Present(const std::unique_ptr<CustomSC>& swapchain, const std::unique_ptr<CustomLD>& lDevice, uint32_t imageIndex){
 
     vk::Semaphore renderFinsishSemaphore[1] = { *mRenderFinishedSemaphore };
 
@@ -121,4 +122,6 @@ void Renderer::Present(const std::unique_ptr<CustomSC>& swapchain, const std::un
     presentInfo.setPResults(nullptr);
 
     vk::Result result = lDevice->GetPresentQueue()->presentKHR(presentInfo);
+
+    return result;
 }

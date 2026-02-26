@@ -9,15 +9,15 @@ bool GraphicsPipeline::SetupShaders(){
     mVertShader = std::make_unique<CustomSM>();
     mFragShader = std::make_unique<CustomSM>();
 
-    if(!mVertShader->CreateShaderModule(mLogicalDevice, "../shaders/triangle.vert.spv"))
+    if(!mVertShader->CreateShaderModule(mLogicalDevice, "../shaders/slang.spv"))
     {
         std::cerr << "Failed to create vertex shader module\n";
         return false;
     };
 
-    std::cout << "Succesfully created vertex shader module for\n";
+    std::cout << "Succesfully created vertex shader module\n";
 
-    if(!mFragShader->CreateShaderModule(mLogicalDevice, "../shaders/triangle.frag.spv"))
+    if(!mFragShader->CreateShaderModule(mLogicalDevice, "../shaders/slang.spv"))
     {
         std::cerr << "Failed to create fragment shader module\n";
         return false;
@@ -43,8 +43,8 @@ bool GraphicsPipeline::CreatePipeline(const std::unique_ptr<CustomSC>& swapchain
     vk::PipelineRenderingCreateInfo renderInfo;
     vk::GraphicsPipelineCreateInfo pipelineInfo;
 
-    SetPipelineShaderCreateInfo(vertCreateInfo, vk::ShaderStageFlagBits::eVertex, mVertShader);
-    SetPipelineShaderCreateInfo(fragCreateInfo, vk::ShaderStageFlagBits::eFragment, mFragShader);
+    SetPipelineVertShaderCreateInfo(vertCreateInfo, mVertShader);
+    SetPipelineFragShaderCreateInfo(fragCreateInfo, mFragShader);
 
     vk::PipelineShaderStageCreateInfo shaderStages[] = {vertCreateInfo, fragCreateInfo};
 
@@ -70,11 +70,21 @@ bool GraphicsPipeline::CreatePipeline(const std::unique_ptr<CustomSC>& swapchain
     }
 }
 
-void GraphicsPipeline::SetPipelineShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, vk::ShaderStageFlagBits shaderType, std::unique_ptr<CustomSM>& shader){
+void GraphicsPipeline::SetPipelineVertShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, std::unique_ptr<CustomSM>& shader){
 
-    info.setStage(shaderType);
+    info.setStage(vk::ShaderStageFlagBits::eVertex);
     info.setModule(*shader->GetShaderModule());
-    info.setPName("main");
+
+    info.setPName("vertMain");
+}
+
+void GraphicsPipeline::SetPipelineFragShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, std::unique_ptr<CustomSM>& shader){
+
+    info.setStage(vk::ShaderStageFlagBits::eFragment);
+    info.setModule(*shader->GetShaderModule());
+
+    info.setPName("fragMain");
+
 }
 
 void GraphicsPipeline::SetPipelineDynamicCreateInfo(vk::PipelineDynamicStateCreateInfo& info){

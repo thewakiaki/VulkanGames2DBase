@@ -4,7 +4,6 @@
 
 #ifndef VULKANGAMES2DBASE_VKSETUP_H
 #define VULKANGAMES2DBASE_VKSETUP_H
-#include "pch.h"
 
 
 

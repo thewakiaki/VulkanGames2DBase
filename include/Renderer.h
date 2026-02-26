@@ -28,7 +28,7 @@ private:
     bool CreateFences(const std::unique_ptr<CustomLD>& lDevice);
 
     void SubmitBuffer(const std::unique_ptr<CmdBuffer>& cmdBuffer, const std::unique_ptr<CustomLD>& lDevice);
-    void Present(const std::unique_ptr<CustomSC>& swapchain, const std::unique_ptr<CustomLD>& lDevice, uint32_t imageIndex);
+    vk::Result Present(const std::unique_ptr<CustomSC>& swapchain, const std::unique_ptr<CustomLD>& lDevice, uint32_t imageIndex);
 
     static constexpr size_t MAX_FRAMES_IN_FLIGHT = 2;
 
