@@ -7,9 +7,9 @@
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
   </component>
-  <component name="CMakePresetLoader"><![CDATA[{
-  "useNewFormat": true
-}]]></component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
   <component name="CMakeProjectFlavorService">
     <option name="flavorId" value="CMakePlainProjectFlavor" />
   </component>
@@ -28,21 +28,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bd4fc6ec-1c37-466a-a0a1-4bcbd88cacc3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/VulkanGames2DBase.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/GraphicsPipeline.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/GraphicsPipeline.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/Renderer.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Renderer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/VkSetup.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/VkSetup.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/triangle.frag" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/triangle.frag.spv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/triangle.vert" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/triangle.vert.spv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/CustomIV.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/GameApp.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/GameApp.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/slang.spv" beforeDir="false" afterPath="$PROJECT_DIR$/shaders/slang.spv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/CommandBuffer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/CommandBuffer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/GraphicsPipeline.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GraphicsPipeline.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/CustomIV.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/CustomSM.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/CustomSM.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/GameApp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameApp.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/Renderer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -66,10 +60,10 @@
     <option name="minorVersion" value="3" />
     <option name="productBranch" value="Classic" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="3AAADYrkN3Zm7mbUDAnpmhTk6Qw" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -88,17 +82,18 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "main",
+    "nodejs_package_manager_path": "npm",
     "org.rust.first.attach.projects": "true",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RunManager">
-    <configuration name="VulkanGame" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="VulkanGames2DBase" TARGET_NAME="VulkanGame" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="VulkanGames2DBase" RUN_TARGET_NAME="VulkanGame">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration name="VulkanGame" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="VulkanGames2DBase" TARGET_NAME="VulkanGame" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="VulkanGames2DBase" RUN_TARGET_NAME="VulkanGame">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -115,6 +110,7 @@
       <option name="presentableId" value="Default" />
       <updated>1772024882870</updated>
       <workItem from="1772024884330" duration="13000" />
+      <workItem from="1772115964483" duration="167000" />
     </task>
     <servers />
   </component>

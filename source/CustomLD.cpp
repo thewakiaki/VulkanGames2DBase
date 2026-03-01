@@ -22,13 +22,20 @@ bool CustomLD::CreateLogicalDevice(const CustomPD& device){
     queueCreateInfo.setQueueCount(1);
     queueCreateInfo.setPQueuePriorities(&queuePriority);
 
-    mDeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME, VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME };
 
     const std::vector<CustomVKStructs::VkQueueFamilies> queueFamilies = device.GetFamilies();
 
     vk::DeviceCreateInfo deviceCreateInfo;
 
     std::vector<vk::DeviceQueueCreateInfo> deviceQueueInfos;
+
+    mDeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+                          VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME,
+                          VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME,
+                          VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME,
+                          VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME,
+                          VK_KHR_MULTIVIEW_EXTENSION_NAME,
+                          VK_KHR_MAINTENANCE2_EXTENSION_NAME};
 
     //to enable more vk features set up feature chain and set pnext to point to this
     vk::PhysicalDeviceDynamicRenderingFeaturesKHR dynamicFeatures{};
@@ -38,6 +45,12 @@ bool CustomLD::CreateLogicalDevice(const CustomPD& device){
     sync2Features.setSynchronization2(true);
     sync2Features.setPNext(&dynamicFeatures);
 
+    vk::PhysicalDeviceDepthStencilResolvePropertiesKHR depthStencilExt{};
+    depthStencilExt.pNext = & sync2Features;
+
+    vk::PhysicalDeviceMultiviewFeaturesKHR multiViewExt{};
+    multiViewExt.setMultiview(vk::True);
+    multiViewExt.setPNext(&depthStencilExt);
 
     vk::PhysicalDeviceFeatures2 features{};
     features.setPNext(&sync2Features);

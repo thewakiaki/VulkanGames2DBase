@@ -3,6 +3,8 @@
 //
 
 #include "../include/VkSetup.h"
+#include <cstdint>
+#include <vector>
 
 
 bool VkSetup::InitVulkan()
@@ -20,18 +22,34 @@ bool VkSetup::CreateInstance()
 
         uint32_t glfwExtensionCount = 0;
         auto glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+        mInstanceExtensions = std::vector<const char*>(glfwExtensions, glfwExtensions + glfwExtensionCount);
 
-    #ifdef __APPLE__
-        std::vector<const char*> allExtensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
-        allExtensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
-        glfwExtensionCount = static_cast<uint32_t>(allExtensions.size());
-        glfwExtensions = allExtensions.data();
-    #endif
+    //#ifdef __APPLE__
+    //    std::vector<const char*> allExtensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+    //    allExtensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+    //    glfwExtensionCount = static_cast<uint32_t>(allExtensions.size());
+    //    glfwExtensions = allExtensions.data();
+    //#endif
 
+        auto availableExtensions = mContext.enumerateInstanceExtensionProperties();
+        std::cout << "Available Instance Extensions: " << availableExtensions.size() << "\n";
 
-        if (!CheckExtensions(mContext, glfwExtensionCount, glfwExtensions)) { return false; }
+        mInstanceExtensions.emplace_back("VK_KHR_get_physical_device_properties2");
 
-        vk::InstanceCreateInfo create_info({}, &gameInfo, 0, nullptr, glfwExtensionCount, glfwExtensions);
+        //for (const auto& ext : availableExtensions) {
+        //    std::cout << "  " << ext.extensionName << " v" << ext.specVersion << "\n";
+        //}
+
+        for(auto ext : mInstanceExtensions)
+        {
+            std::cout << "Extension : " << ext << " added\n";
+        }
+
+        const char** extensionsToCheck = mInstanceExtensions.data();
+
+        if (!CheckExtensions(mContext, mInstanceExtensions.size(), extensionsToCheck)) { return false; }
+
+        vk::InstanceCreateInfo create_info({}, &gameInfo, 0, nullptr, static_cast<uint32_t>(mInstanceExtensions.size()), mInstanceExtensions.data());
 
 
         mVulkanInstance = std::make_unique<vk::raii::Instance>(mContext, create_info);
@@ -55,7 +73,7 @@ bool VkSetup::CreateInstance()
 
 }
 
-bool VkSetup::CheckExtensions(const vk::raii::Context& vContext, const uint32_t& extensionCount, const char**& extensions) {
+bool VkSetup::CheckExtensions(const vk::raii::Context& vContext, const uint32_t& extensionCount, const char** extensions) {
 
     auto extensionProperties = vContext.enumerateInstanceExtensionProperties();
     bool extensionFound = false;

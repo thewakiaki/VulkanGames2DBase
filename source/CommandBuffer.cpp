@@ -117,7 +117,7 @@ void CmdBuffer::TransitionImageLayout(uint32_t imageIndex, const std::unique_ptr
 
 void CmdBuffer::BeginRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex){
 
-    vk::ClearColorValue clearColor = vk::ClearColorValue(0.025f, 0.025f, 0.025f, 1.0f);
+    vk::ClearColorValue clearColor = vk::ClearColorValue(0.045f, 0.045f, 0.045f, 1.0f);
 
     vk::RenderingAttachmentInfo  attachmentInfo;
     attachmentInfo.setImageView(*swapchain->GetImageViews()[imageIndex]);
@@ -138,6 +138,8 @@ void CmdBuffer::BeginRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t
 void CmdBuffer::BindToGraphicsPipeline(){
 
     mCommandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, *mGraphicPipeline->GetGraphicsPipeline());
+    bool working = mGraphicPipeline->GetGraphicsPipeline() != nullptr;
+    std::cout << "Binding pipeline: " << working << std::endl;
 }
 
 void CmdBuffer::SetViewportScissor(const std::unique_ptr<CustomSC>& swapchain){

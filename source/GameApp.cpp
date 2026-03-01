@@ -8,7 +8,6 @@
 #include <CustomPD.h>
 #include <CustomLD.h>
 #include <CustomSC.h>
-#include <CustomIV.h>
 #include <GraphicsPipeline.h>
 #include <CommandBuffer.h>
 #include <Renderer.h>
@@ -21,6 +20,10 @@ bool GameApp::Run()
 {
     std::cout << "Game Starting Up\n";
 
+
+    glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
+
+
     if(!glfwInit()){
         std::cerr << "Failed to init glfw\n";
         return false;
@@ -28,6 +31,15 @@ bool GameApp::Run()
 
     InitEngineComponents();
 
+    if (!GameStart()) { return false; }
+
+    GamePlaying();
+
+    return true;
+}
+
+bool GameApp::GameStart()
+{
     if(!mGameWindow->InitGameWindow()) { return false; }
 
     if (!mVkInstance->InitVulkan()) { return false; }
@@ -44,8 +56,6 @@ bool GameApp::Run()
 
     if(!mSwapChain->CreateImageViews(mLogicalDevice)) { return false; }
 
-    if(!mImageView->CreateImageViews(mSwapChain, mLogicalDevice)) { return false; }
-
     if(!mGraphicsPipeline->SetupShaders()) { return false; }
 
     if(!mGraphicsPipeline->CreatePipeline(mSwapChain)) { return false; }
@@ -56,24 +66,7 @@ bool GameApp::Run()
 
     if(!mRenderer->CreateSyncObjects(mLogicalDevice)) { return false; }
 
-    if (!GameStart()) { return false; }
-
-    GamePlaying();
-
     return true;
-}
-
-bool GameApp::GameStart()
-{
-    if (mGameWindow->InitGameWindow())
-    {
-        mPlaying = true;
-        return true;
-    }
-
-    std::cerr << "Game Failed to Start\n";
-
-    return false;
 }
 
 bool GameApp::GamePlaying()
@@ -88,7 +81,7 @@ bool GameApp::GamePlaying()
                   glfwSetWindowShouldClose(mGameWindow->GetWindow(), true);
               }
 
-        mLogicalDevice->GetLogicalDevice()->waitIdle();
+        //mLogicalDevice->GetLogicalDevice()->waitIdle();
     }
 
     GameEnd();
@@ -109,7 +102,6 @@ void GameApp::InitEngineComponents(){
     mPhysicalDevice = std::make_unique<CustomPD>();
     mLogicalDevice = std::make_unique<CustomLD>();
     mSwapChain = std::make_unique<CustomSC>();
-    mImageView = std::make_unique<CustomIV>();
     mGraphicsPipeline = std::make_unique<GraphicsPipeline>(*mLogicalDevice);
     mCommandPool = std::make_unique<CmdBuffer>(mGraphicsPipeline);
     mRenderer = std::make_unique<Renderer>(mSwapChain);

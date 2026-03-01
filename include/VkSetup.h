@@ -5,8 +5,6 @@
 #ifndef VULKANGAMES2DBASE_VKSETUP_H
 #define VULKANGAMES2DBASE_VKSETUP_H
 
-
-
 class VkSetup
 {
 public:
@@ -20,10 +18,11 @@ public:
 private:
 
     bool CreateInstance();
-    bool CheckExtensions(const vk::raii::Context& vContext, const uint32_t& extensionCount, const char**& extensions);
+    bool CheckExtensions(const vk::raii::Context& vContext, const uint32_t& extensionCount, const char** extensions);
 
     std::unique_ptr<vk::raii::Instance> mVulkanInstance;
     vk::raii::Context mContext;
+    std::vector<const char*> mInstanceExtensions;
 };
 
 

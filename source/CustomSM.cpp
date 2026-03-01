@@ -14,12 +14,13 @@ bool CustomSM::CreateShaderModule(const CustomLD& lDevice, const char* fileName)
 
     SetCreateInfo(createInfo);
 
-    mShaderModule = std::make_unique<vk::raii::ShaderModule>(*lDevice.GetLogicalDevice(), createInfo);
+    try {
+        mShaderModule = std::make_unique<vk::raii::ShaderModule>(*lDevice.GetLogicalDevice(), createInfo);
 
-    if(!mShaderModule)
-    {
-        std::cerr << "Failed to create module\n";
-        return false;
+        std::cout << "Shader module for " << fileName << " succesfully created\n";
+    } catch (const vk::SystemError& err) {
+
+        std::cerr << "Failed to create shader module for " << fileName << "\n";
     }
 
     return true;

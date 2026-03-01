@@ -9,7 +9,6 @@
 #include "CustomPD.h"
 #include "CustomLD.h"
 #include "CustomSC.h"
-#include "CustomIV.h"
 #include "GraphicsPipeline.h"
 #include "CommandBuffer.h"
 #include "Renderer.h"
@@ -40,7 +39,6 @@ private:
     std::unique_ptr<GameWindow> mGameWindow;
     std::unique_ptr<CustomSurface> mCustomSurface;
     std::unique_ptr<CustomSC> mSwapChain;
-    std::unique_ptr<CustomIV> mImageView;
     std::unique_ptr<GraphicsPipeline> mGraphicsPipeline;
     std::unique_ptr<CmdBuffer> mCommandPool;
     std::unique_ptr<Renderer> mRenderer;

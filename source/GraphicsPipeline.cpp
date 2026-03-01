@@ -53,8 +53,8 @@ bool GraphicsPipeline::CreatePipeline(const std::unique_ptr<CustomSC>& swapchain
     SetPipelineInputAssemblyCreateInfo(inputAssemblyInfo);
     SetPipelineRasterCreateInfo(rasterCreateInfo);
     SetPipelineColorBlendCreateInfo(colorBlendInfo);
-    SetPipelineLayoutCreateInfo(layoutCreatInfo);
     SetPiplineRenderCreateInfo(renderInfo, swapchain);
+    SetPipelineLayoutCreateInfo(layoutCreatInfo);
     SetGraphicsPipilineCreateInfo(pipelineInfo, shaderStages, vertInputInfo, inputAssemblyInfo, viewportStateInfo, rasterCreateInfo, multisampleInfo, colorBlendInfo, dynamicInfo, renderInfo);
 
     try {

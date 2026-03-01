@@ -73,7 +73,7 @@ bool Renderer::CreateFences(const std::unique_ptr<CustomLD>& lDevice){
 void Renderer::DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain, const std::unique_ptr<CmdBuffer>& cmdBuffer,
                          const std::unique_ptr<GraphicsPipeline>& pipeline){
 
-    mBufferIndex = mCurrentFrame % MAX_FRAMES_IN_FLIGHT;
+    //mBufferIndex = mCurrentFrame % MAX_FRAMES_IN_FLIGHT;
 
     vk::Result fenceResult = lDevice->GetLogicalDevice()->waitForFences({*mDrawFence}, vk::True, UINT64_MAX);
 
@@ -86,8 +86,6 @@ void Renderer::DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::un
     SubmitBuffer(cmdBuffer, lDevice);
 
     vk::Result presentResult = Present(swapchain, lDevice, imageIndex);
-
-    lDevice->GetLogicalDevice()->waitIdle();
 }
 
 void Renderer::SubmitBuffer(const std::unique_ptr<CmdBuffer>& cmdBuffer, const std::unique_ptr<CustomLD>& lDevice){

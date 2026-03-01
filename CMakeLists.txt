@@ -32,8 +32,6 @@ add_executable(VulkanGame
 		source/CustomSurface.cpp
 		include/CustomSC.h
 		source/CustomSC.cpp
-		include/CustomIV.h
-		source/CustomIV.cpp
 		include/CustomSM.h
 		source/CustomSM.cpp
 		include/FileUtility.h
