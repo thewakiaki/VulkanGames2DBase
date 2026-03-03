@@ -1,8 +1,5 @@
 #include "../include/GraphicsPipeline.h"
-#include "vulkan/vulkan.hpp"
-#include <memory>
-#include <vulkan/vulkan_core.h>
-#include <vulkan/vulkan_raii.hpp>
+
 
 bool GraphicsPipeline::SetupShaders(){
 
@@ -89,9 +86,10 @@ void GraphicsPipeline::SetPipelineFragShaderCreateInfo(vk::PipelineShaderStageCr
 
 void GraphicsPipeline::SetPipelineDynamicCreateInfo(vk::PipelineDynamicStateCreateInfo& info){
 
-    std::vector<vk::DynamicState> dynamicStates = { vk::DynamicState::eViewport, vk::DynamicState::eScissor };
+    mDynamicStates.emplace_back(vk::DynamicState::eViewport);
+    mDynamicStates.emplace_back(vk::DynamicState::eScissor);
 
-    info.setDynamicStates(dynamicStates);
+    info.setDynamicStates(mDynamicStates);
 }
 
 void GraphicsPipeline::SetPipelineVertInputCreateInfo(vk::PipelineVertexInputStateCreateInfo& info){

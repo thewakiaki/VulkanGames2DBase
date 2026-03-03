@@ -3,7 +3,7 @@
 //
 
 #include "../include/GameWindow.h"
-#include <GLFW/glfw3.h>
+
 
 GameWindow::GameWindow()
 {

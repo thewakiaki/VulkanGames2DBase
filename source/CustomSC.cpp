@@ -1,9 +1,6 @@
 #include "../include/CustomSC.h"
 #include "CustomVkStructs.h"
-#include "vulkan/vulkan.hpp"
-#include <memory>
-#include <vector>
-#include <vulkan/vulkan_raii.hpp>
+
 
 bool CustomSC::CreateSwapchain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice){
 

@@ -23,5 +23,6 @@
 #include <ios>
 #include <fstream>
 #include <functional>
+#include <limits>
 
 #endif // PCH_H

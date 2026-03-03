@@ -1,9 +1,6 @@
 #include "../include/CustomSurface.h"
-#include "vulkan/vulkan.hpp"
-#include <GLFW/glfw3.h>
-#include <algorithm>
-#include <cstdint>
-#include <limits>
+
+
 
 bool CustomSurface::CreateSurface(const std::unique_ptr<vk::raii::Instance>& vkInstance, GLFWwindow* window){
 
@@ -72,6 +69,7 @@ bool CustomSurface::SelectPresentMode(){
 
 
 bool CustomSurface::SetupSurfaceCapabilities(GLFWwindow* window){
+
 
     if (mSurfaceCapabilities.minImageExtent.width == 0 || mSurfaceCapabilities.minImageExtent.height == 0) {
 

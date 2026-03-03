@@ -1,7 +1,4 @@
 #include "../include/GameApp.h"
-#include <iostream>
-#include <GLFW/glfw3.h>
-
 #include <GameWindow.h>
 #include <VkSetup.h>
 #include <CustomSurface.h>
@@ -64,18 +61,17 @@ bool GameApp::GameStart()
 
     if(!mCommandPool->CreateCommandBuffer(mLogicalDevice)) { return false; }
 
-    if(!mRenderer->CreateSyncObjects(mLogicalDevice)) { return false; }
-
     return true;
 }
 
 bool GameApp::GamePlaying()
 {
+    return false;
 
     while (!glfwWindowShouldClose(mGameWindow->GetWindow()))
     {
         glfwPollEvents();
-        mRenderer->DrawFrame(mLogicalDevice, mSwapChain, mCommandPool, mGraphicsPipeline);
+        //mRenderer->DrawFrame(mLogicalDevice, mSwapChain, mCommandPool, mGraphicsPipeline);
 
         if (glfwGetKey(mGameWindow->GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
                   glfwSetWindowShouldClose(mGameWindow->GetWindow(), true);

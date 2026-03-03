@@ -1,9 +1,6 @@
 #include "CustomSM.h"
 #include "CustomLD.h"
 #include "FileUtility.h"
-#include "vulkan/vulkan.hpp"
-#include <memory>
-#include <vulkan/vulkan_raii.hpp>
 
 
 bool CustomSM::CreateShaderModule(const CustomLD& lDevice, const char* fileName){

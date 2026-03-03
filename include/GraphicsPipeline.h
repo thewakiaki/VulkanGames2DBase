@@ -5,8 +5,8 @@
 #include "CustomSM.h"
 #include "CustomLD.h"
 #include "vulkan/vulkan.hpp"
-#include <memory>
-#include <vulkan/vulkan_raii.hpp>
+#include <vector>
+
 
 
 class GraphicsPipeline{
@@ -44,6 +44,8 @@ private:
 
     std::unique_ptr<CustomSM> mVertShader;
     std::unique_ptr<CustomSM> mFragShader;
+
+    std::vector<vk::DynamicState> mDynamicStates;
 
 };
 

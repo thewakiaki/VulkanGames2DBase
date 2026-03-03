@@ -3,8 +3,7 @@
 //
 #include "../include/CustomPD.h"
 #include "CustomVkStructs.h"
-#include "vulkan/vulkan.hpp"
-#include <vulkan/vulkan_core.h>
+
 
 bool CustomPD::SetUpPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance, const std::unique_ptr<CustomSurface>& surface){
 

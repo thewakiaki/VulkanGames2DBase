@@ -1,11 +1,8 @@
 #include "../include/CustomLD.h"
-#include "../include/CustomPD.h"
 #include "CustomVkStructs.h"
 #include "vulkan/vulkan.hpp"
-#include <cstdint>
-#include <vector>
 #include <vulkan/vulkan_core.h>
-#include <vulkan/vulkan_hpp_macros.hpp>
+
 
 CustomLD::~CustomLD(){
 
@@ -37,26 +34,23 @@ bool CustomLD::CreateLogicalDevice(const CustomPD& device){
                           VK_KHR_MULTIVIEW_EXTENSION_NAME,
                           VK_KHR_MAINTENANCE2_EXTENSION_NAME};
 
-    //to enable more vk features set up feature chain and set pnext to point to this
-    vk::PhysicalDeviceDynamicRenderingFeaturesKHR dynamicFeatures{};
-    dynamicFeatures.setDynamicRendering(true);
-
+    //to enable more vk features set up feature chain and set pnext to point to this - need to be set up in reverse order
+    //Features at the bottom of the dependcy tree first
     vk::PhysicalDeviceSynchronization2FeaturesKHR sync2Features{};
     sync2Features.setSynchronization2(true);
-    sync2Features.setPNext(&dynamicFeatures);
 
-    vk::PhysicalDeviceDepthStencilResolvePropertiesKHR depthStencilExt{};
-    depthStencilExt.pNext = & sync2Features;
+    vk::PhysicalDeviceDynamicRenderingFeaturesKHR dynamicFeatures{};
+    dynamicFeatures.setDynamicRendering(true);
+    dynamicFeatures.setPNext(&sync2Features);
 
-    vk::PhysicalDeviceMultiviewFeaturesKHR multiViewExt{};
-    multiViewExt.setMultiview(vk::True);
-    multiViewExt.setPNext(&depthStencilExt);
+    vk::PhysicalDeviceVulkan11Features vk11Featrues{};
+    vk11Featrues.setShaderDrawParameters(true);
+    vk11Featrues.setPNext(&dynamicFeatures);
 
     vk::PhysicalDeviceFeatures2 features{};
-    features.setPNext(&sync2Features);
+    features.setPNext(&vk11Featrues);
 
     deviceCreateInfo.setPNext(&features);
-
 
     vk::DeviceQueueCreateInfo graphicsQueueInfo{};
     graphicsQueueInfo.setQueueFamilyIndex(device.GetFamilies()[(int)CustomVKStructs::RequiredVkFamilies::Graphics].familyIndex);

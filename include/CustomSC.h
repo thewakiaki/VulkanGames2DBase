@@ -6,9 +6,6 @@
 #include "CustomLD.h"
 #include "CustomPD.h"
 #include "CustomSurface.h"
-#include "vulkan/vulkan.hpp"
-#include <cstddef>
-#include <vulkan/vulkan_raii.hpp>
 
 class CustomSC {
 public:

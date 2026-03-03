@@ -3,8 +3,6 @@
 //
 
 #include "../include/VkSetup.h"
-#include <cstdint>
-#include <vector>
 
 
 bool VkSetup::InitVulkan()
@@ -18,7 +16,7 @@ bool VkSetup::CreateInstance()
 {
     try {
 
-        constexpr vk::ApplicationInfo gameInfo("Game Name", VK_MAKE_VERSION(1, 0, 0), "Game Engine", VK_MAKE_VERSION(1, 0, 0), VK_API_VERSION_1_0);
+        constexpr vk::ApplicationInfo gameInfo("Game Name", VK_MAKE_VERSION(1, 0, 0), "Game Engine", VK_MAKE_VERSION(1, 0, 0), VK_API_VERSION_1_3);
 
         uint32_t glfwExtensionCount = 0;
         auto glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);

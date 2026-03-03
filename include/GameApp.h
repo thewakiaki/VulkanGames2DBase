@@ -1,7 +1,7 @@
 #ifndef GAME_APP_H
 #define GAME_APP_H
 
-#include <memory>
+
 
 #include "GameWindow.h"
 #include "VkSetup.h"

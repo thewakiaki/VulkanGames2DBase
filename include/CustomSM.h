@@ -3,8 +3,7 @@
 
 
 #include "CustomLD.h"
-#include "vulkan/vulkan.hpp"
-#include <vector>
+
 class CustomSM {
 
 public:
