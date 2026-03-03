@@ -31,6 +31,9 @@ namespace CustomVKStructs {
         uint32_t familyIndex;
         bool familyFound = false;
     };
+
+    constexpr size_t MAX_FRAMES_IN_FLIGHT = 2;
+
 }
 
 #endif //VULKANGAMES2DBASE_CUSTOMVKSTRUCTS_H

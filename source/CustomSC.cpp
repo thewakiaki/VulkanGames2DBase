@@ -10,8 +10,6 @@ bool CustomSC::CreateSwapchain(GLFWwindow* window,const std::unique_ptr<CustomSu
     mSwapMinImageCount = std::max(3u, surface->GetCapabilities().minImageCount);
     mSwapMinImageCount = ( surface->GetCapabilities().maxImageCount > 0 && mSwapMinImageCount > surface->GetCapabilities().maxImageCount) ? surface->GetCapabilities().maxImageCount : mSwapMinImageCount;
 
-    std::cout << "Successfully created Swapchain\n";
-
     mSwapImageCount = mSwapMinImageCount + 1;
 
     if(surface->GetCapabilities().maxImageCount > 0 && mSwapImageCount > surface->GetCapabilities().maxImageCount)

@@ -18,7 +18,7 @@ bool GameApp::Run()
     std::cout << "Game Starting Up\n";
 
 
-    glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
+    //glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
 
 
     if(!glfwInit()){
@@ -59,25 +59,25 @@ bool GameApp::GameStart()
 
     if(!mCommandPool->CreateCommandPool(mPhysicalDevice, mLogicalDevice)) { return false; }
 
-    if(!mCommandPool->CreateCommandBuffer(mLogicalDevice)) { return false; }
+    if(!mCommandPool->CreateCommandBuffers(mLogicalDevice)) { return false; }
+
+    if(!mRenderer->CreateSyncObjects(mLogicalDevice, mSwapChain)) { return false; }
 
     return true;
 }
 
 bool GameApp::GamePlaying()
 {
-    return false;
+    //return false;
 
     while (!glfwWindowShouldClose(mGameWindow->GetWindow()))
     {
         glfwPollEvents();
-        //mRenderer->DrawFrame(mLogicalDevice, mSwapChain, mCommandPool, mGraphicsPipeline);
+        mRenderer->DrawFrame(mLogicalDevice, mSwapChain, mCommandPool, mGraphicsPipeline);
 
         if (glfwGetKey(mGameWindow->GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
                   glfwSetWindowShouldClose(mGameWindow->GetWindow(), true);
               }
-
-        //mLogicalDevice->GetLogicalDevice()->waitIdle();
     }
 
     GameEnd();

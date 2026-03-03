@@ -5,7 +5,9 @@
 #include "CustomLD.h"
 #include "CustomSC.h"
 #include "GraphicsPipeline.h"
+#include <cstdint>
 #include <memory>
+#include <vulkan/vulkan_raii.hpp>
 
 class CmdBuffer{
 
@@ -14,26 +16,31 @@ public:
 
     bool CreateCommandPool(const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice);
     bool CreateCommandBuffer(const std::unique_ptr<CustomLD>& lDevice);
+    bool CreateCommandBuffers(const std::unique_ptr<CustomLD>& lDevice);
 
-    void BeginRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex);
-    void BindToGraphicsPipeline();
+    void BeginRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex, uint32_t frameIndex);
+    void BeginRenderPass(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex);
+    void BindToGraphicsPipeline(uint32_t frameIndex);
     void EndRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex);
-    void RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex, const std::unique_ptr<GraphicsPipeline>& pipeline);
+    void RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex, const std::unique_ptr<GraphicsPipeline>& pipeline, uint32_t frameIndex);
 
     inline const std::unique_ptr<vk::raii::CommandBuffer>& GetCommandBuffer() const { return mCommandBuffer; }
+    inline vk::raii::CommandBuffers& GetCommandBuffers() const { return *mCommandBuffers; }
+
 
 private:
-    void TransitionImageLayout(uint32_t imageIndex, const std::unique_ptr<CustomSC>& swapchain, vk::ImageLayout oldLayout, vk::ImageLayout newLayout,
+    void TransitionImageLayout(uint32_t frameIndex, uint32_t imageIndex, const std::unique_ptr<CustomSC>& swapchain, vk::ImageLayout oldLayout, vk::ImageLayout newLayout,
                                vk::AccessFlags2 srcAccessMask, vk::AccessFlags2 dstAccessMask, vk::PipelineStageFlags2 srcStageMask,
                                vk::PipelineStageFlags2 dstStageMask);
 
-    void SetViewportScissor(const std::unique_ptr<CustomSC>& swapchain);
+    void SetViewportScissor(const std::unique_ptr<CustomSC>& swapchain, uint32_t frameIndex);
 
     std::unique_ptr<vk::raii::CommandPool> mCommandPool;
+
+    std::unique_ptr<vk::raii::CommandBuffers> mCommandBuffers;
     std::unique_ptr<vk::raii::CommandBuffer> mCommandBuffer;
 
     const std::unique_ptr<GraphicsPipeline>& mGraphicPipeline;
-
 };
 
 #endif // COMMAND_BUFFER_H

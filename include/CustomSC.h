@@ -1,8 +1,6 @@
 #ifndef SWAPCHAIN_H
 #define SWAPCHAIN_H
 
-
-
 #include "CustomLD.h"
 #include "CustomPD.h"
 #include "CustomSurface.h"

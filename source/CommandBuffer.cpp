@@ -1,6 +1,10 @@
 #include "CommandBuffer.h"
 #include "CustomVkStructs.h"
 #include "GraphicsPipeline.h"
+#include "vulkan/vulkan.hpp"
+#include <cstdint>
+#include <memory>
+#include <vulkan/vulkan_raii.hpp>
 
 
 
@@ -55,35 +59,55 @@ bool CmdBuffer::CreateCommandBuffer(const std::unique_ptr<CustomLD>& lDevice){
     }
 }
 
-void CmdBuffer::RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex, const std::unique_ptr<GraphicsPipeline>& pipeline){
-    mCommandBuffer->reset(vk::CommandBufferResetFlagBits::eReleaseResources);
+bool CmdBuffer::CreateCommandBuffers(const std::unique_ptr<CustomLD>& lDevice){
+    vk::CommandBufferAllocateInfo allocInfo;
+    allocInfo.setCommandPool(*mCommandPool);
+    allocInfo.setLevel(vk::CommandBufferLevel::ePrimary);
+    allocInfo.setCommandBufferCount(CustomVKStructs::MAX_FRAMES_IN_FLIGHT);
 
-    mCommandBuffer->begin({});
+    try {
+         mCommandBuffers = std::make_unique<vk::raii::CommandBuffers>(*lDevice->GetLogicalDevice(), allocInfo);
+         std::cout << "Created Command Buffers\n";
 
-    TransitionImageLayout(imageIndex, swapchain, vk::ImageLayout::eUndefined, vk::ImageLayout::eColorAttachmentOptimal,
-                          {}, vk::AccessFlagBits2::eColorAttachmentWrite, vk::PipelineStageFlagBits2::eColorAttachmentOutput,
-                          vk::PipelineStageFlagBits2::eColorAttachmentOutput);
+         return true;
+    } catch (const vk::SystemError& err) {
 
-    BeginRender(swapchain, imageIndex);
+        std::cerr << "Failed to create Command Buffers\n";
+        return false;
+    }
 
-    SetViewportScissor(swapchain);
-
-    BindToGraphicsPipeline();
-
-    mCommandBuffer->draw(3, 1, 0, 0);
-
-    mCommandBuffer->endRendering();
-
-    TransitionImageLayout(imageIndex, swapchain, vk::ImageLayout::eColorAttachmentOptimal, vk::ImageLayout::ePresentSrcKHR,
-        vk::AccessFlagBits2::eColorAttachmentWrite, {}, vk::PipelineStageFlagBits2::eColorAttachmentOutput, vk::PipelineStageFlagBits2::eBottomOfPipe);
-
-
-    mCommandBuffer->end();
-
-    std::cout << "Render recorded\n";
 }
 
-void CmdBuffer::TransitionImageLayout(uint32_t imageIndex, const std::unique_ptr<CustomSC>& swapchain, vk::ImageLayout oldLayout, vk::ImageLayout newLayout,
+void CmdBuffer::RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex,
+                                    const std::unique_ptr<GraphicsPipeline>& pipeline, uint32_t frameIndex){
+
+    GetCommandBuffers()[frameIndex].reset(vk::CommandBufferResetFlagBits::eReleaseResources);
+
+    GetCommandBuffers()[frameIndex].begin({});
+
+    TransitionImageLayout(frameIndex, imageIndex, swapchain, vk::ImageLayout::eUndefined, vk::ImageLayout::eColorAttachmentOptimal, {},
+                          vk::AccessFlagBits2::eColorAttachmentWrite, vk::PipelineStageFlagBits2::eColorAttachmentOutput,
+                              vk::PipelineStageFlagBits2::eColorAttachmentOutput);
+
+    BeginRender(swapchain, imageIndex, frameIndex);
+
+    SetViewportScissor(swapchain, frameIndex);
+
+    BindToGraphicsPipeline(frameIndex);
+
+    GetCommandBuffers()[frameIndex].draw(3, 1, 0, 0);
+
+    GetCommandBuffers()[frameIndex].endRendering();
+
+    TransitionImageLayout(frameIndex, imageIndex, swapchain, vk::ImageLayout::eColorAttachmentOptimal, vk::ImageLayout::ePresentSrcKHR, vk::AccessFlagBits2::eColorAttachmentWrite,
+                          {}, vk::PipelineStageFlagBits2::eColorAttachmentOutput, vk::PipelineStageFlagBits2::eBottomOfPipe);
+
+    GetCommandBuffers()[frameIndex].end();
+
+    //std::cout << "Render recorded\n";
+}
+
+void CmdBuffer::TransitionImageLayout(uint32_t frameIndex, uint32_t imageIndex, const std::unique_ptr<CustomSC>& swapchain, vk::ImageLayout oldLayout, vk::ImageLayout newLayout,
                                       vk::AccessFlags2 srcAccessMask, vk::AccessFlags2 dstAccessMask, vk::PipelineStageFlags2 srcStageMask,
                                       vk::PipelineStageFlags2 dstStageMask)
             {
@@ -112,10 +136,10 @@ void CmdBuffer::TransitionImageLayout(uint32_t imageIndex, const std::unique_ptr
     dependencyInfo.setImageMemoryBarrierCount(1);
     dependencyInfo.setPImageMemoryBarriers(&barrier);
 
-    mCommandBuffer->pipelineBarrier2(dependencyInfo);
+     GetCommandBuffers()[frameIndex].pipelineBarrier2(dependencyInfo);
 }
 
-void CmdBuffer::BeginRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex){
+void CmdBuffer::BeginRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex, uint32_t frameIndex){
 
     vk::ClearColorValue clearColor = vk::ClearColorValue(0.045f, 0.045f, 0.045f, 1.0f);
 
@@ -132,18 +156,18 @@ void CmdBuffer::BeginRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t
     renderingInfo.setColorAttachmentCount(1);
     renderingInfo.setPColorAttachments(&attachmentInfo);
 
-    mCommandBuffer->beginRendering(renderingInfo);
+    GetCommandBuffers()[frameIndex].beginRendering(renderingInfo);
 }
 
-void CmdBuffer::BindToGraphicsPipeline(){
+void CmdBuffer::BindToGraphicsPipeline(uint32_t frameIndex){
 
-    mCommandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, *mGraphicPipeline->GetGraphicsPipeline());
-    bool working = mGraphicPipeline->GetGraphicsPipeline() != nullptr;
-    std::cout << "Binding pipeline: " << working << std::endl;
+    GetCommandBuffers()[frameIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, *mGraphicPipeline->GetGraphicsPipeline());
+    //bool working = mGraphicPipeline->GetGraphicsPipeline() != nullptr;
+    //std::cout << "Binding pipeline: " << working << std::endl;
 }
 
-void CmdBuffer::SetViewportScissor(const std::unique_ptr<CustomSC>& swapchain){
+void CmdBuffer::SetViewportScissor(const std::unique_ptr<CustomSC>& swapchain, uint32_t frameIndex){
 
-    mCommandBuffer->setViewport(0, vk::Viewport(0.0f, 0.0f, (float)swapchain->GetExtent().width, (float)swapchain->GetExtent().height, 0.0f, 1.0f));
-    mCommandBuffer->setScissor(0, vk::Rect2D{vk::Offset2D(0, 0), swapchain->GetExtent()});
+    GetCommandBuffers()[frameIndex].setViewport(0, vk::Viewport(0.0f, 0.0f, (float)swapchain->GetExtent().width, (float)swapchain->GetExtent().height, 0.0f, 1.0f));
+    GetCommandBuffers()[frameIndex].setScissor(0, vk::Rect2D{vk::Offset2D(0, 0), swapchain->GetExtent()});
 }
