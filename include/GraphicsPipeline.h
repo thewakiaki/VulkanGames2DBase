@@ -4,8 +4,6 @@
 #include "CustomSC.h"
 #include "CustomSM.h"
 #include "CustomLD.h"
-#include "vulkan/vulkan.hpp"
-#include <vector>
 
 
 
@@ -15,6 +13,7 @@ public:
 
     bool SetupShaders();
     bool CreatePipeline(const std::unique_ptr<CustomSC>& swapchain);
+    void Cleanup();
 
     inline const std::unique_ptr<vk::raii::Pipeline>& GetGraphicsPipeline() const { return mGraphicsPipeline; }
 

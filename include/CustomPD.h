@@ -13,6 +13,8 @@ public:
     CustomPD() = default;
     ~CustomPD() {};
 
+    void Cleanup();
+
     bool SetUpPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance, const std::unique_ptr<CustomSurface>& surface);
 
     const std::unique_ptr<vk::raii::PhysicalDevice>& GetPhysicalDevice() const { return mPhysicalDevice; }

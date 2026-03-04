@@ -96,3 +96,7 @@ bool VkSetup::CheckExtensions(const vk::raii::Context& vContext, const uint32_t&
 
     return true;
 }
+
+void VkSetup::Cleanup(){
+    mVulkanInstance.reset();
+}

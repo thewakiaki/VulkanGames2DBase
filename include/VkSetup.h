@@ -11,6 +11,8 @@ public:
     VkSetup() = default;
     ~VkSetup() {};
 
+    void Cleanup();
+
     bool InitVulkan();
 
     inline const std::unique_ptr<vk::raii::Instance>& GetInstance() const { return mVulkanInstance; }

@@ -8,6 +8,12 @@ CustomLD::~CustomLD(){
 
 }
 
+void CustomLD::Cleanup(){
+    mLogicalDevice.reset();
+    mGraphicsQueue.reset();
+    mPresentQueue.reset();
+}
+
 bool CustomLD::CreateLogicalDevice(const CustomPD& device){
 
     const uint32_t& graphicsFamily = device.GetFamilies()[(int)CustomVKStructs::RequiredVkFamilies::Graphics].familyIndex;

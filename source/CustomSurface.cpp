@@ -101,3 +101,7 @@ bool CustomSurface::SetupSurfaceVariables(GLFWwindow* window) {
 
     return true;
 }
+
+void CustomSurface::Cleanup(){
+    mSurface.reset();
+}

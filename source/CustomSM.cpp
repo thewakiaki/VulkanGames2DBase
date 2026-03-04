@@ -27,3 +27,7 @@ void CustomSM::SetCreateInfo(vk::ShaderModuleCreateInfo& info) {
     info.setCodeSize(mShaderCode.size() * sizeof(char));
     info.setPCode(reinterpret_cast<const uint32_t*>(mShaderCode.data()));
 }
+
+void CustomSM::Cleanup(){
+    mShaderModule.reset();
+}

@@ -22,8 +22,6 @@ bool CustomSC::CreateSwapchain(GLFWwindow* window,const std::unique_ptr<CustomSu
     CreateSwapInfo(createInfo, surface);
     SetQueueFamilies(pDevice, createInfo);
 
-
-
     try {
         mSwapChain = std::make_unique<vk::raii::SwapchainKHR>(*lDevice->GetLogicalDevice(), createInfo);
         mSwapChainImages = mSwapChain->getImages();
@@ -111,4 +109,19 @@ bool CustomSC::CreateImageViews(const std::unique_ptr<CustomLD>& lDevice){
         std::cerr << "Failed to Create Image Views\n";
         return false;
     }
+}
+
+bool CustomSC::RecreateSwapChain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,
+                                 const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice){
+    lDevice->GetLogicalDevice()->waitIdle();
+
+    if(!CreateSwapchain(window, surface, pDevice, lDevice)) { return false;}
+    if(!CreateImageViews(lDevice)) { return false; }
+
+    return true;
+}
+
+void CustomSC::CleanupSwapchain(){
+    mSwapChainImageViews.clear();
+    mSwapChain = nullptr;
 }

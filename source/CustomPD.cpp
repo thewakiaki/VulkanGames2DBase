@@ -4,6 +4,14 @@
 #include "../include/CustomPD.h"
 #include "CustomVkStructs.h"
 
+void CustomPD::Cleanup(){
+    mPhysicalDevice.reset();
+
+    for(CustomVKStructs::PhysicalDeviceScore& device : mDeviceScores)
+    {
+        device.Cleanup();
+    }
+}
 
 bool CustomPD::SetUpPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance, const std::unique_ptr<CustomSurface>& surface){
 

@@ -1,12 +1,12 @@
 #include "CommandBuffer.h"
 #include "CustomVkStructs.h"
 #include "GraphicsPipeline.h"
-#include "vulkan/vulkan.hpp"
-#include <cstdint>
-#include <memory>
-#include <vulkan/vulkan_raii.hpp>
 
-
+void CmdBuffer::Cleanup(){
+    mCommandBuffer.reset();
+    mCommandBuffers.reset();
+    mCommandPool.reset();
+}
 
 bool CmdBuffer::CreateCommandPool(const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice){
 
@@ -93,7 +93,7 @@ void CmdBuffer::RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, 
 
     SetViewportScissor(swapchain, frameIndex);
 
-    BindToGraphicsPipeline(frameIndex);
+    BindToGraphicsPipeline(frameIndex, pipeline);
 
     GetCommandBuffers()[frameIndex].draw(3, 1, 0, 0);
 
@@ -159,15 +159,19 @@ void CmdBuffer::BeginRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t
     GetCommandBuffers()[frameIndex].beginRendering(renderingInfo);
 }
 
-void CmdBuffer::BindToGraphicsPipeline(uint32_t frameIndex){
+void CmdBuffer::BindToGraphicsPipeline(uint32_t frameIndex, const std::unique_ptr<GraphicsPipeline>& pipeline){
 
-    GetCommandBuffers()[frameIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, *mGraphicPipeline->GetGraphicsPipeline());
+    GetCommandBuffers()[frameIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, *pipeline->GetGraphicsPipeline());
     //bool working = mGraphicPipeline->GetGraphicsPipeline() != nullptr;
     //std::cout << "Binding pipeline: " << working << std::endl;
 }
 
 void CmdBuffer::SetViewportScissor(const std::unique_ptr<CustomSC>& swapchain, uint32_t frameIndex){
 
-    GetCommandBuffers()[frameIndex].setViewport(0, vk::Viewport(0.0f, 0.0f, (float)swapchain->GetExtent().width, (float)swapchain->GetExtent().height, 0.0f, 1.0f));
-    GetCommandBuffers()[frameIndex].setScissor(0, vk::Rect2D{vk::Offset2D(0, 0), swapchain->GetExtent()});
+    vk::Extent2D swapExtent = swapchain->GetExtent();
+
+    vk::Viewport viewport = vk::Viewport(0.0f, 0.0f, (float)swapExtent.width, (float)swapExtent.height, 0.0f, 1.0f);
+
+    GetCommandBuffers()[frameIndex].setViewport(0, viewport);
+    GetCommandBuffers()[frameIndex].setScissor(0, vk::Rect2D{vk::Offset2D(0, 0), swapExtent});
 }

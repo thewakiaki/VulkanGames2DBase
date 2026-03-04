@@ -18,13 +18,12 @@ public:
 
     bool InitGameWindow();
 
+    void CleanupGameWindow() const;
 private:
     GLFWwindow* mGame_window;
 
     const char* mGame_Title = "Game Title";
 
-
-    void CleanupGameWindow() const;
 
 };
 

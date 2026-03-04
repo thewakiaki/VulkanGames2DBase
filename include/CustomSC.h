@@ -11,6 +11,11 @@ public:
     bool CreateSwapchain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,
                          const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice);
 
+    bool RecreateSwapChain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,
+                           const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice);
+
+    void CleanupSwapchain();
+
     bool CreateImageViews(const std::unique_ptr<CustomLD>& lDevice);
 
     inline const std::unique_ptr<vk::raii::SwapchainKHR>& GetSwapchain() const { return mSwapChain; }

@@ -8,6 +8,8 @@ public :
     CustomLD() = default;
     ~CustomLD();
 
+    void Cleanup();
+
     bool CreateLogicalDevice(const CustomPD& device);
 
     inline const std::unique_ptr<vk::raii::Device>& GetLogicalDevice() const { return mLogicalDevice; }

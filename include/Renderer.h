@@ -12,11 +12,15 @@ class Renderer{
 
 public:
     Renderer(const std::unique_ptr<CustomSC>& swapchain);
+    void Cleanup();
 
     bool CreateSyncObjects(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain);
 
     bool DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain, const std::unique_ptr<CmdBuffer>& cmdBuffer,
                    const std::unique_ptr<GraphicsPipeline>& pipeline);
+
+    inline const vk::Viewport GetViewport() const {return mViewport; }
+    inline const vk::Rect2D GetScissor() const {return mScissor; }
 
 private:
 

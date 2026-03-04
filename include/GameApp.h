@@ -17,6 +17,7 @@ class GameApp
 {
 public:
     GameApp();
+    void Cleanup();
 
     bool Run();
 

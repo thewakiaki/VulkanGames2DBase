@@ -13,6 +13,7 @@ namespace CustomVKStructs {
         PhysicalDeviceScore(int scr, std::unique_ptr<vk::raii::PhysicalDevice> device) : score(scr), physical_device{std::move(device)} {}
 
         void SetDevice(std::unique_ptr<vk::raii::PhysicalDevice> device) { physical_device = std::move(device);}
+        void Cleanup() { physical_device.reset();}
 
         int score = 0;
         std::unique_ptr<vk::raii::PhysicalDevice> physical_device;

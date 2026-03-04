@@ -1,4 +1,5 @@
 #include "../include/GameApp.h"
+#include <GLFW/glfw3.h>
 #include <GameWindow.h>
 #include <VkSetup.h>
 #include <CustomSurface.h>
@@ -73,6 +74,8 @@ bool GameApp::GamePlaying()
     while (!glfwWindowShouldClose(mGameWindow->GetWindow()))
     {
         glfwPollEvents();
+        auto currentExtent = mSwapChain->GetExtent();
+
         mRenderer->DrawFrame(mLogicalDevice, mSwapChain, mCommandPool, mGraphicsPipeline);
 
         if (glfwGetKey(mGameWindow->GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -87,7 +90,18 @@ bool GameApp::GamePlaying()
 
 void GameApp::GameEnd()
 {
-    glfwTerminate();
+    mLogicalDevice->GetLogicalDevice()->waitIdle();
+
+    mRenderer->Cleanup();
+    mCommandPool->Cleanup();
+    mGraphicsPipeline->Cleanup();
+    mSwapChain->CleanupSwapchain();
+    mLogicalDevice->Cleanup();
+    mPhysicalDevice->Cleanup();
+    mCustomSurface->Cleanup();
+    mVkInstance->Cleanup();
+    mGameWindow->CleanupGameWindow();
+
     std::cout << "Game Finished\n";
 }
 
@@ -99,6 +113,18 @@ void GameApp::InitEngineComponents(){
     mLogicalDevice = std::make_unique<CustomLD>();
     mSwapChain = std::make_unique<CustomSC>();
     mGraphicsPipeline = std::make_unique<GraphicsPipeline>(*mLogicalDevice);
-    mCommandPool = std::make_unique<CmdBuffer>(mGraphicsPipeline);
+    mCommandPool = std::make_unique<CmdBuffer>();
     mRenderer = std::make_unique<Renderer>(mSwapChain);
+}
+
+void GameApp::Cleanup(){
+    mGameWindow.reset();
+    mVkInstance.reset();
+    mCustomSurface.reset();
+    mPhysicalDevice.reset();
+    mLogicalDevice.reset();
+    mSwapChain.reset();
+    mGraphicsPipeline.reset();
+    mCommandPool.reset();
+    mRenderer.reset();
 }

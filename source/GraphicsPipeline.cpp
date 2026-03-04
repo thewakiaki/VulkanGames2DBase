@@ -1,4 +1,5 @@
 #include "../include/GraphicsPipeline.h"
+#include "vulkan/vulkan.hpp"
 
 
 bool GraphicsPipeline::SetupShaders(){
@@ -6,7 +7,7 @@ bool GraphicsPipeline::SetupShaders(){
     mVertShader = std::make_unique<CustomSM>();
     mFragShader = std::make_unique<CustomSM>();
 
-    if(!mVertShader->CreateShaderModule(mLogicalDevice, "../shaders/slang.spv"))
+    if(!mVertShader->CreateShaderModule(mLogicalDevice, "../shaders/vert.spv"))
     {
         std::cerr << "Failed to create vertex shader module\n";
         return false;
@@ -14,7 +15,7 @@ bool GraphicsPipeline::SetupShaders(){
 
     std::cout << "Succesfully created vertex shader module\n";
 
-    if(!mFragShader->CreateShaderModule(mLogicalDevice, "../shaders/slang.spv"))
+    if(!mFragShader->CreateShaderModule(mLogicalDevice, "../shaders/frag.spv"))
     {
         std::cerr << "Failed to create fragment shader module\n";
         return false;
@@ -26,6 +27,7 @@ bool GraphicsPipeline::SetupShaders(){
 }
 
 bool GraphicsPipeline::CreatePipeline(const std::unique_ptr<CustomSC>& swapchain){
+
 
     vk::PipelineShaderStageCreateInfo vertCreateInfo;
     vk::PipelineShaderStageCreateInfo fragCreateInfo;
@@ -58,6 +60,7 @@ bool GraphicsPipeline::CreatePipeline(const std::unique_ptr<CustomSC>& swapchain
         mGraphicsPipeline = std::make_unique<vk::raii::Pipeline>(mLogicalDevice.GetLogicalDevice()->createGraphicsPipeline(nullptr, pipelineInfo, nullptr));
         std::cout << "Created Graphics Pipeline\n";
 
+
         return true;
 
     } catch (const vk::SystemError& err) {
@@ -71,17 +74,18 @@ void GraphicsPipeline::SetPipelineVertShaderCreateInfo(vk::PipelineShaderStageCr
 
     info.setStage(vk::ShaderStageFlagBits::eVertex);
     info.setModule(*shader->GetShaderModule());
-
-    info.setPName("vertMain");
+    info.setPName("main");
+    info.setPSpecializationInfo(nullptr);
+    info.setFlags({});
 }
 
 void GraphicsPipeline::SetPipelineFragShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, std::unique_ptr<CustomSM>& shader){
 
     info.setStage(vk::ShaderStageFlagBits::eFragment);
     info.setModule(*shader->GetShaderModule());
-
-    info.setPName("fragMain");
-
+    info.setPName("main");
+    info.setPSpecializationInfo(nullptr);
+    info.setFlags({});
 }
 
 void GraphicsPipeline::SetPipelineDynamicCreateInfo(vk::PipelineDynamicStateCreateInfo& info){
@@ -96,14 +100,13 @@ void GraphicsPipeline::SetPipelineVertInputCreateInfo(vk::PipelineVertexInputSta
 
     //glsl used so no buffer needed
 
-    info.setVertexBindingDescriptions(nullptr);
-    info.setVertexAttributeDescriptions(nullptr);
+    info.setVertexBindingDescriptions({});
+    info.setVertexAttributeDescriptions({});
 }
 
 void GraphicsPipeline::SetPipelineInputAssemblyCreateInfo(vk::PipelineInputAssemblyStateCreateInfo& info){
 
     info.setTopology(vk::PrimitiveTopology::eTriangleList);
-    info.setPrimitiveRestartEnable(vk::False);
 }
 
 void GraphicsPipeline::SetPipelineRasterCreateInfo(vk::PipelineRasterizationStateCreateInfo& info){
@@ -111,8 +114,8 @@ void GraphicsPipeline::SetPipelineRasterCreateInfo(vk::PipelineRasterizationStat
     info.setDepthClampEnable(vk::False);
     info.setRasterizerDiscardEnable(vk::False);
     info.setPolygonMode(vk::PolygonMode::eFill);
-    info.setCullMode(vk::CullModeFlagBits::eNone);
-    info.setFrontFace(vk::FrontFace::eCounterClockwise);
+    info.setCullMode(vk::CullModeFlagBits::eBack);
+    info.setFrontFace(vk::FrontFace::eClockwise);
     info.setDepthBiasEnable(vk::False);
     info.setDepthBiasSlopeFactor(1.0f);
     info.setLineWidth(1.0f);
@@ -138,7 +141,9 @@ void GraphicsPipeline::SetPipelineColorBlendCreateInfo(vk::PipelineColorBlendSta
     attachment.setColorWriteMask(vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA);
 
     info.setLogicOpEnable(false);
-    info.setAttachments(attachment);
+
+    vk::PipelineColorBlendAttachmentState attachments[] = {attachment};
+    info.setAttachments(attachments);
 }
 
 void GraphicsPipeline::SetPipelineLayoutCreateInfo(vk::PipelineLayoutCreateInfo& info){
@@ -173,4 +178,15 @@ void GraphicsPipeline::SetGraphicsPipilineCreateInfo(vk::GraphicsPipelineCreateI
     info.setPDynamicState(&dynamicInfo);
     info.setLayout(*mPipelineLayout);
     info.setRenderPass(nullptr);
+}
+
+void GraphicsPipeline::Cleanup(){
+    mFragShader->Cleanup();
+    mVertShader->Cleanup();
+
+    mFragShader.reset();
+    mVertShader.reset();
+
+    mGraphicsPipeline.reset();
+    mPipelineLayout.reset();
 }

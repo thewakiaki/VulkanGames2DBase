@@ -137,3 +137,9 @@ vk::PresentInfoKHR Renderer::PresentToSwapchain(const std::unique_ptr<CustomSC>&
 
     return presentInfo;
 }
+
+void Renderer::Cleanup(){
+    mImageAvailableSemaphores.clear();
+    mRenderFinishedSemaphores.clear();
+    mDrawFences.clear();
+}

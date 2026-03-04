@@ -5,6 +5,7 @@
 class CustomSurface{
     public :
         bool CreateSurface(const std::unique_ptr<vk::raii::Instance>& vkInstance, GLFWwindow* window);
+        void Cleanup();
 
         inline void SetCapabilities(const std::unique_ptr<vk::raii::PhysicalDevice>& device) { mSurfaceCapabilities = device->getSurfaceCapabilitiesKHR(*mSurface); }
         inline void SetFormats(const std::unique_ptr<vk::raii::PhysicalDevice>& device) { mAvailableFormats = device->getSurfaceFormatsKHR(*mSurface); };
