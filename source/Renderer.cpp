@@ -18,8 +18,17 @@ bool Renderer::DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::un
 
     lDevice->GetLogicalDevice()->resetFences(*mDrawFences[mCurrentFrame]);
 
+    if(!GetNextImage(swapchain, window, surface, pDevice, lDevice)) {
+        if (!mNeedToRecreateSwapchain) {
+            throw std::runtime_error("failed to acquire swap chain image!");
+        }
+    }
 
-    if(!GetNextImage(swapchain, window, surface, pDevice, lDevice)) { throw std::runtime_error("failed to acquire swap chain image!"); }
+    if (mNeedToRecreateSwapchain) {
+        swapchain->RecreateSwapChain(window, surface, pDevice, lDevice);
+        mNeedToRecreateSwapchain = false;
+        return true;
+    }
 
     cmdBuffer->GetCommandBuffers()[mCurrentFrame].reset();
 
@@ -32,15 +41,13 @@ bool Renderer::DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::un
     if (presentResult == vk::Result::eErrorOutOfDateKHR || presentResult == vk::Result::eSuboptimalKHR || mFrameBufferResized)
     {
         mFrameBufferResized = false;
-        mImageIndex = 0;
-        mCurrentFrame = 0;
         return true;
     }
 
     mCurrentFrame = (mCurrentFrame + 1 ) % CustomVKStructs::MAX_FRAMES_IN_FLIGHT;
 
     return true;
-};
+}
 
 bool Renderer::CreateSyncObjects(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain){
 
@@ -112,19 +119,7 @@ bool Renderer::GetNextImage(const std::unique_ptr<CustomSC>& swapchain, GLFWwind
 
     if(acquireImageResult.first == vk::Result::eErrorOutOfDateKHR || acquireImageResult.first == vk::Result::eSuboptimalKHR || mFrameBufferResized)
     {
-        lDevice->GetLogicalDevice()->waitIdle();
-
-        swapchain->RecreateSwapChain(window, surface, pDevice, lDevice);
-        mFrameBufferResized = false;
-
-        std::pair<vk::Result, uint32_t> newImageResult;
-        std::tie(newImageResult.first, newImageResult.second) = swapchain->GetSwapchain()->acquireNextImage(UINT64_MAX, *mImageAvailableSemaphores[mCurrentFrame], nullptr);
-
-        if (newImageResult.first == vk::Result::eSuccess) {
-            mImageIndex = newImageResult.second;
-            return true;
-        }
-
+        mNeedToRecreateSwapchain = true;
         return false;
     }
 
@@ -152,7 +147,7 @@ vk::SubmitInfo Renderer::SubmitCommandBuffer(const std::unique_ptr<CmdBuffer>& c
 vk::PresentInfoKHR Renderer::PresentToSwapchain(const std::unique_ptr<CustomSC>& swapchain){
     vk::PresentInfoKHR presentInfo;
     presentInfo.setWaitSemaphoreCount(1);
-    presentInfo.setPWaitSemaphores(&*mRenderFinishedSemaphores[mCurrentFrame]);
+    presentInfo.setPWaitSemaphores(&*mRenderFinishedSemaphores[mImageIndex]);
     presentInfo.setSwapchainCount(1);
     presentInfo.setPSwapchains(&**swapchain->GetSwapchain());
     presentInfo.setPImageIndices(&mImageIndex);

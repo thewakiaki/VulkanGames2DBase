@@ -4,9 +4,6 @@
 #include "CustomLD.h"
 #include "CommandBuffer.h"
 #include "CustomSC.h"
-#include "GraphicsPipeline.h"
-#include "vulkan/vulkan.hpp"
-#include <vector>
 
 class Renderer{
 
@@ -47,6 +44,7 @@ private:
     uint32_t mImageIndex = 0;
 
     bool mFrameBufferResized = false;
+    bool mNeedToRecreateSwapchain = false;
 };
 
 #endif // RENDERER_H

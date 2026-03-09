@@ -113,12 +113,22 @@ bool CustomSC::CreateImageViews(const std::unique_ptr<CustomLD>& lDevice){
 
 bool CustomSC::RecreateSwapChain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,
                                  const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice){
+    int width = 0, height = 0;
+
+    glfwGetFramebufferSize(window, &width, &height);
+    while (width == 0 || height == 0) {
+        glfwGetFramebufferSize(window, &width, &height);
+        glfwWaitEvents();
+    }
+
     lDevice->GetLogicalDevice()->waitIdle();
 
     Cleanup();
 
     if(!CreateSwapchain(window, surface, pDevice, lDevice)) { return false;}
     if(!CreateImageViews(lDevice)) { return false; }
+
+    std::cout << "Swap Chain Recreated\n";
 
     return true;
 }

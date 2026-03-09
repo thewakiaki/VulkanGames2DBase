@@ -19,9 +19,6 @@ bool GameApp::Run()
     std::cout << "Game Starting Up\n";
 
 
-    glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
-
-
     if(!glfwInit()){
         std::cerr << "Failed to init glfw\n";
         return false;

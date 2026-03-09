@@ -133,7 +133,7 @@ void CmdBuffer::TransitionImageLayout(uint32_t frameIndex, uint32_t imageIndex, 
     dependencyInfo.setImageMemoryBarrierCount(1);
     dependencyInfo.setPImageMemoryBarriers(&barrier);
 
-     GetCommandBuffers()[frameIndex].pipelineBarrier2(dependencyInfo);
+    GetCommandBuffers()[frameIndex].pipelineBarrier2(dependencyInfo);
 }
 
 void CmdBuffer::BeginRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex, uint32_t frameIndex) const {
