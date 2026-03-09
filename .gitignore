@@ -10,6 +10,7 @@ build-*
 Makefile*
 Makefile.Debug
 Makefile.Release
+/cmake-build-debug
 
 # Compiled objects and generated files
 *.o
@@ -35,3 +36,5 @@ desktop.ini
 *~
 *.swp
 *.swo
+
+/.cache

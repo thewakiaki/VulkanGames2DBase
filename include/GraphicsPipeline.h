@@ -9,18 +9,18 @@
 
 class GraphicsPipeline{
 public:
-    GraphicsPipeline(const CustomLD& lDevice) : mLogicalDevice(lDevice){}
+    explicit GraphicsPipeline(const CustomLD& lDevice) : mLogicalDevice(lDevice){}
 
     bool SetupShaders();
     bool CreatePipeline(const std::unique_ptr<CustomSC>& swapchain);
     void Cleanup();
 
-    inline const std::unique_ptr<vk::raii::Pipeline>& GetGraphicsPipeline() const { return mGraphicsPipeline; }
+   [[nodiscard]] const std::unique_ptr<vk::raii::Pipeline>& GetGraphicsPipeline() const { return mGraphicsPipeline; }
 
 
 private:
-    void SetPipelineVertShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, std::unique_ptr<CustomSM>& shader);
-    void SetPipelineFragShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, std::unique_ptr<CustomSM>& shader);
+    void SetPipelineVertShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, const std::unique_ptr<CustomSM>& shader);
+    void SetPipelineFragShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, const std::unique_ptr<CustomSM>& shader);
     void SetPipelineDynamicCreateInfo(vk::PipelineDynamicStateCreateInfo& info);
     void SetPipelineVertInputCreateInfo(vk::PipelineVertexInputStateCreateInfo& info);
     void SetPipelineInputAssemblyCreateInfo(vk::PipelineInputAssemblyStateCreateInfo& info);
@@ -30,11 +30,11 @@ private:
     void SetPipelineLayoutCreateInfo(vk::PipelineLayoutCreateInfo& info);
     void SetPiplineRenderCreateInfo(vk::PipelineRenderingCreateInfo& info, const std::unique_ptr<CustomSC>& swapchain);
 
-    void SetGraphicsPipilineCreateInfo(vk::GraphicsPipelineCreateInfo& info, vk::PipelineShaderStageCreateInfo shaderStages[],
-                                       vk::PipelineVertexInputStateCreateInfo& vertexInput, vk::PipelineInputAssemblyStateCreateInfo& inputAssemblyInfo,
-                                       vk::PipelineViewportStateCreateInfo& viewportInfo, vk::PipelineRasterizationStateCreateInfo& rasterInfo,
-                                       vk::PipelineMultisampleStateCreateInfo& multisampleInfo, vk::PipelineColorBlendStateCreateInfo& colourBlendInfo,
-                                       vk::PipelineDynamicStateCreateInfo& dynamicInfo, vk::PipelineRenderingCreateInfo& renderInfo);
+    void SetGraphicsPipelineCreateInfo(vk::GraphicsPipelineCreateInfo& info, vk::PipelineShaderStageCreateInfo shaderStages[],
+                                       const vk::PipelineVertexInputStateCreateInfo& vertexInput, const vk::PipelineInputAssemblyStateCreateInfo& inputAssemblyInfo,
+                                       const vk::PipelineViewportStateCreateInfo& viewportInfo, const vk::PipelineRasterizationStateCreateInfo& rasterInfo,
+                                       const vk::PipelineMultisampleStateCreateInfo& multisampleInfo, const vk::PipelineColorBlendStateCreateInfo& colourBlendInfo,
+                                       const vk::PipelineDynamicStateCreateInfo& dynamicInfo, vk::PipelineRenderingCreateInfo& renderInfo);
 
     std::unique_ptr<vk::raii::Pipeline> mGraphicsPipeline;
     std::unique_ptr<vk::raii::PipelineLayout> mPipelineLayout;

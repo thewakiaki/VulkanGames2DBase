@@ -7,7 +7,7 @@ bool GraphicsPipeline::SetupShaders(){
     mVertShader = std::make_unique<CustomSM>();
     mFragShader = std::make_unique<CustomSM>();
 
-    if(!mVertShader->CreateShaderModule(mLogicalDevice, "../shaders/vert.spv"))
+    if(!mVertShader->CreateShaderModule(mLogicalDevice, "../assets/shaders/vert.spv"))
     {
         std::cerr << "Failed to create vertex shader module\n";
         return false;
@@ -15,7 +15,7 @@ bool GraphicsPipeline::SetupShaders(){
 
     std::cout << "Succesfully created vertex shader module\n";
 
-    if(!mFragShader->CreateShaderModule(mLogicalDevice, "../shaders/frag.spv"))
+    if(!mFragShader->CreateShaderModule(mLogicalDevice, "../assets/shaders/frag.spv"))
     {
         std::cerr << "Failed to create fragment shader module\n";
         return false;
@@ -54,7 +54,7 @@ bool GraphicsPipeline::CreatePipeline(const std::unique_ptr<CustomSC>& swapchain
     SetPipelineColorBlendCreateInfo(colorBlendInfo);
     SetPiplineRenderCreateInfo(renderInfo, swapchain);
     SetPipelineLayoutCreateInfo(layoutCreatInfo);
-    SetGraphicsPipilineCreateInfo(pipelineInfo, shaderStages, vertInputInfo, inputAssemblyInfo, viewportStateInfo, rasterCreateInfo, multisampleInfo, colorBlendInfo, dynamicInfo, renderInfo);
+    SetGraphicsPipelineCreateInfo(pipelineInfo, shaderStages, vertInputInfo, inputAssemblyInfo, viewportStateInfo, rasterCreateInfo, multisampleInfo, colorBlendInfo, dynamicInfo, renderInfo);
 
     try {
         mGraphicsPipeline = std::make_unique<vk::raii::Pipeline>(mLogicalDevice.GetLogicalDevice()->createGraphicsPipeline(nullptr, pipelineInfo, nullptr));
@@ -64,13 +64,13 @@ bool GraphicsPipeline::CreatePipeline(const std::unique_ptr<CustomSC>& swapchain
         return true;
 
     } catch (const vk::SystemError& err) {
-        std::cerr << "Failed to Create Graphics Pipeline\n";
+        std::cerr << "Failed to Create Graphics Pipeline error: " << err.what() << "\n";
 
         return false;
     }
 }
 
-void GraphicsPipeline::SetPipelineVertShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, std::unique_ptr<CustomSM>& shader){
+void GraphicsPipeline::SetPipelineVertShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, const std::unique_ptr<CustomSM>& shader){
 
     info.setStage(vk::ShaderStageFlagBits::eVertex);
     info.setModule(*shader->GetShaderModule());
@@ -79,7 +79,7 @@ void GraphicsPipeline::SetPipelineVertShaderCreateInfo(vk::PipelineShaderStageCr
     info.setFlags({});
 }
 
-void GraphicsPipeline::SetPipelineFragShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, std::unique_ptr<CustomSM>& shader){
+void GraphicsPipeline::SetPipelineFragShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, const std::unique_ptr<CustomSM>& shader){
 
     info.setStage(vk::ShaderStageFlagBits::eFragment);
     info.setModule(*shader->GetShaderModule());
@@ -159,11 +159,11 @@ void GraphicsPipeline::SetPiplineRenderCreateInfo(vk::PipelineRenderingCreateInf
     info.setPColorAttachmentFormats(&swapchain->GetFormat().format);
 }
 
-void GraphicsPipeline::SetGraphicsPipilineCreateInfo(vk::GraphicsPipelineCreateInfo& info, vk::PipelineShaderStageCreateInfo shaderStages[],
-                                   vk::PipelineVertexInputStateCreateInfo& vertexInput, vk::PipelineInputAssemblyStateCreateInfo& inputAssemblyInfo,
-                                   vk::PipelineViewportStateCreateInfo& viewportInfo, vk::PipelineRasterizationStateCreateInfo& rasterInfo,
-                                   vk::PipelineMultisampleStateCreateInfo& multisampleInfo, vk::PipelineColorBlendStateCreateInfo& colourBlendInfo,
-                                   vk::PipelineDynamicStateCreateInfo& dynamicInfo, vk::PipelineRenderingCreateInfo& renderInfo)
+void GraphicsPipeline::SetGraphicsPipelineCreateInfo(vk::GraphicsPipelineCreateInfo& info, vk::PipelineShaderStageCreateInfo shaderStages[],
+                                   const vk::PipelineVertexInputStateCreateInfo& vertexInput, const vk::PipelineInputAssemblyStateCreateInfo& inputAssemblyInfo,
+                                   const vk::PipelineViewportStateCreateInfo& viewportInfo, const vk::PipelineRasterizationStateCreateInfo& rasterInfo,
+                                   const vk::PipelineMultisampleStateCreateInfo& multisampleInfo, const vk::PipelineColorBlendStateCreateInfo& colourBlendInfo,
+                                   const vk::PipelineDynamicStateCreateInfo& dynamicInfo, vk::PipelineRenderingCreateInfo& renderInfo)
 {
 
     info.setPNext(renderInfo);

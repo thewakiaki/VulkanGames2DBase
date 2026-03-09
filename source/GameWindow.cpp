@@ -3,6 +3,7 @@
 //
 
 #include "../include/GameWindow.h"
+#include "Renderer.h"
 
 
 GameWindow::GameWindow()
@@ -14,7 +15,7 @@ GameWindow::~GameWindow()
 {
     if (mGame_window)
     {
-        CleanupGameWindow();
+        Cleanup();
     }
 }
 
@@ -27,6 +28,8 @@ bool GameWindow::InitGameWindow()
 
 
     mGame_window = glfwCreateWindow(initial_window_width, initial_window_height, mGame_Title, nullptr, nullptr);
+    glfwSetWindowUserPointer(mGame_window, this);
+    glfwSetFramebufferSizeCallback(mGame_window, FrameBufferResizeCallback);
 
     if (mGame_window) {
         glfwShowWindow(mGame_window);
@@ -36,7 +39,23 @@ bool GameWindow::InitGameWindow()
     return false;
 }
 
-void GameWindow::CleanupGameWindow() const {
-    glfwDestroyWindow(mGame_window);
+vk::Extent2D GameWindow::GetFrameBufferSize() const{
+    int width;
+    int height;
+
+    glfwGetFramebufferSize(mGame_window, &width, &height);
+    return {static_cast<uint32_t>(width), static_cast<uint32_t>(height)};
+}
+
+void GameWindow::Cleanup() {
+    mRenderer = nullptr;
+    delete mRenderer;
+
+    if(mGame_window) { glfwDestroyWindow(mGame_window); }
     glfwTerminate();
+}
+
+void GameWindow::FrameBufferResizeCallback(GLFWwindow *window, int width, int height){
+    GameWindow* gWindow = reinterpret_cast<GameWindow*>(glfwGetWindowUserPointer(window));
+    gWindow->mRenderer->ResizeFrameBuffer();
 }

@@ -11,7 +11,7 @@ public:
 
     void Cleanup();
 
-    inline const std::unique_ptr<vk::raii::ShaderModule>& GetShaderModule() const { return mShaderModule; }
+    [[nodiscard]] const std::unique_ptr<vk::raii::ShaderModule>& GetShaderModule() const { return mShaderModule; }
 
 
 private:

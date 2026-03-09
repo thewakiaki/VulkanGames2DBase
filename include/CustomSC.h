@@ -14,15 +14,15 @@ public:
     bool RecreateSwapChain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,
                            const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice);
 
-    void CleanupSwapchain();
+    void Cleanup();
 
     bool CreateImageViews(const std::unique_ptr<CustomLD>& lDevice);
 
-    inline const std::unique_ptr<vk::raii::SwapchainKHR>& GetSwapchain() const { return mSwapChain; }
-    inline const std::vector<vk::Image>& GetImages() const { return mSwapChainImages; }
-    inline const std::vector<std::unique_ptr<vk::raii::ImageView>>& GetImageViews() const { return mSwapChainImageViews;}
-    inline const vk::SurfaceFormatKHR& GetFormat() const { return mSwapChainSurfaceFormat; }
-    inline const vk::Extent2D& GetExtent() const { return mSwapChainExtent; };
+    [[nodiscard]] const std::unique_ptr<vk::raii::SwapchainKHR>& GetSwapchain() const { return mSwapChain; }
+    [[nodiscard]] const std::vector<vk::Image>& GetImages() const { return mSwapChainImages; }
+    [[nodiscard]] const std::vector<std::unique_ptr<vk::raii::ImageView>>& GetImageViews() const { return mSwapChainImageViews;}
+    [[nodiscard]] const vk::SurfaceFormatKHR& GetFormat() const { return mSwapChainSurfaceFormat; }
+    [[nodiscard]] const vk::Extent2D& GetExtent() const { return mSwapChainExtent; };
 
 
 private:
@@ -37,10 +37,10 @@ private:
     vk::SurfaceFormatKHR mSwapChainSurfaceFormat;
     vk::Extent2D mSwapChainExtent;
 
-    uint32_t mSwapMinImageCount;
-    uint32_t mSwapImageCount;
+    uint32_t mSwapMinImageCount = 0;
+    uint32_t mSwapImageCount = 0;
 
-    size_t mImageIndex;
+    size_t mImageIndex = 0;
 
 };
 

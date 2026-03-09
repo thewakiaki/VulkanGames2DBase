@@ -19,7 +19,7 @@ bool GameApp::Run()
     std::cout << "Game Starting Up\n";
 
 
-    //glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
+    glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
 
 
     if(!glfwInit()){
@@ -64,6 +64,10 @@ bool GameApp::GameStart()
 
     if(!mRenderer->CreateSyncObjects(mLogicalDevice, mSwapChain)) { return false; }
 
+    mGameWindow->SetRenderer(mRenderer.get());
+
+
+
     return true;
 }
 
@@ -74,9 +78,8 @@ bool GameApp::GamePlaying()
     while (!glfwWindowShouldClose(mGameWindow->GetWindow()))
     {
         glfwPollEvents();
-        auto currentExtent = mSwapChain->GetExtent();
 
-        mRenderer->DrawFrame(mLogicalDevice, mSwapChain, mCommandPool, mGraphicsPipeline);
+        mRenderer->DrawFrame(mLogicalDevice, mSwapChain, mCommandPool, mGraphicsPipeline, mGameWindow->GetWindow(), mCustomSurface, mPhysicalDevice);
 
         if (glfwGetKey(mGameWindow->GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
                   glfwSetWindowShouldClose(mGameWindow->GetWindow(), true);
@@ -95,12 +98,12 @@ void GameApp::GameEnd()
     mRenderer->Cleanup();
     mCommandPool->Cleanup();
     mGraphicsPipeline->Cleanup();
-    mSwapChain->CleanupSwapchain();
+    mSwapChain->Cleanup();
     mLogicalDevice->Cleanup();
     mPhysicalDevice->Cleanup();
     mCustomSurface->Cleanup();
     mVkInstance->Cleanup();
-    mGameWindow->CleanupGameWindow();
+    mGameWindow->Cleanup();
 
     std::cout << "Game Finished\n";
 }

@@ -7,27 +7,27 @@ class CustomSurface{
         bool CreateSurface(const std::unique_ptr<vk::raii::Instance>& vkInstance, GLFWwindow* window);
         void Cleanup();
 
-        inline void SetCapabilities(const std::unique_ptr<vk::raii::PhysicalDevice>& device) { mSurfaceCapabilities = device->getSurfaceCapabilitiesKHR(*mSurface); }
-        inline void SetFormats(const std::unique_ptr<vk::raii::PhysicalDevice>& device) { mAvailableFormats = device->getSurfaceFormatsKHR(*mSurface); };
-        inline void SetPresentModes(const std::unique_ptr<vk::raii::PhysicalDevice>& device) { mAvailablePresentModes = device->getSurfacePresentModesKHR(*mSurface); }
+        void SetCapabilities(const std::unique_ptr<vk::raii::PhysicalDevice>& device) { mSurfaceCapabilities = device->getSurfaceCapabilitiesKHR(*mSurface); }
+        void SetFormats(const std::unique_ptr<vk::raii::PhysicalDevice>& device) { mAvailableFormats = device->getSurfaceFormatsKHR(*mSurface); };
+        void SetPresentModes(const std::unique_ptr<vk::raii::PhysicalDevice>& device) { mAvailablePresentModes = device->getSurfacePresentModesKHR(*mSurface); }
 
         bool SetupSurfaceVariables(GLFWwindow* window);
 
-        inline const vk::SurfaceCapabilitiesKHR& GetCapabilities() const { return mSurfaceCapabilities; }
-        inline const std::vector<vk::SurfaceFormatKHR>& GetAvailableFormats() const { return mAvailableFormats; }
-        inline const std::vector<vk::PresentModeKHR>& GetPresentModes() const { return mAvailablePresentModes; }
-        inline const std::unique_ptr<vk::raii::SurfaceKHR>& GetSurface() const { return mSurface; }
+        [[nodiscard]] const vk::SurfaceCapabilitiesKHR& GetCapabilities() const { return mSurfaceCapabilities; }
+        [[nodiscard]] const std::vector<vk::SurfaceFormatKHR>& GetAvailableFormats() const { return mAvailableFormats; }
+        [[nodiscard]] const std::vector<vk::PresentModeKHR>& GetPresentModes() const { return mAvailablePresentModes; }
+        [[nodiscard]] const std::unique_ptr<vk::raii::SurfaceKHR>& GetSurface() const { return mSurface; }
 
-        inline const vk::SurfaceFormatKHR GetChosenFormat() const { return mSurfaceFormat; }
-        inline const vk::Extent2D GetChosenExtent() const { return mSurfaceExtent; }
-        inline const vk::PresentModeKHR GetChosenPresentMode() const { return mPresentMode; }
+        [[nodiscard]] vk::Extent2D GetChosenExtent() const { return mSurfaceExtent; }
+        [[nodiscard]] vk::SurfaceFormatKHR GetChosenFormat() const { return mSurfaceFormat; }
+        [[nodiscard]] vk::PresentModeKHR GetChosenPresentMode() const { return mPresentMode; }
 
     private :
         bool SelectSurfaceFormat();
         bool SelectPresentMode();
         bool SetupSurfaceCapabilities(GLFWwindow* window);
 
-        VkBool32 mDeviceSupported;
+        VkBool32 mDeviceSupported = false;
 
         std::unique_ptr<vk::raii::SurfaceKHR> mSurface;
 
@@ -36,11 +36,11 @@ class CustomSurface{
         std::vector<vk::PresentModeKHR> mAvailablePresentModes;
 
         vk::SurfaceFormatKHR mSurfaceFormat;
-        vk::PresentModeKHR mPresentMode;
+        vk::PresentModeKHR mPresentMode = vk::PresentModeKHR();
         vk::Extent2D mSurfaceExtent;
 
-        int mSurfaceWidth;
-        int mSurfaceHeight;
+        int mSurfaceWidth = 0;
+        int mSurfaceHeight = 0;
 };
 
 #endif// CUSTOM_SURFACE_H

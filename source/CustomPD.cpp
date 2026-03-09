@@ -34,10 +34,6 @@ bool CustomPD::SelectPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& v
     std::cout << "Physical device found\n";
 
     for (vk::raii::PhysicalDevice device : devices) {
-        int score = 0;
-
-        vk::PhysicalDeviceProperties deviceProperties = device.getProperties();
-        vk::PhysicalDeviceFeatures deviceFeatures = device.getFeatures();
 
         if (!DeviceTypeSuitable(device)) {
             std::cerr << "Physical device type not suitable\n";
@@ -127,13 +123,13 @@ bool CustomPD::FindQueueFamilies(const std::unique_ptr<CustomSurface>& surface){
         if(deviceQueueFamilies[queue_index].queueFlags & vk::QueueFlagBits::eGraphics)
         {
             std::cout << "Graphics Queue found\n";
-            mQueueFamilies[(int)CustomVKStructs::RequiredVkFamilies::Graphics].familyIndex = queue_index;
-            mQueueFamilies[(int)CustomVKStructs::RequiredVkFamilies::Graphics].familyFound = true;
+            mQueueFamilies[static_cast<int>(CustomVKStructs::RequiredVkFamilies::Graphics)].familyIndex = queue_index;
+            mQueueFamilies[static_cast<int>(CustomVKStructs::RequiredVkFamilies::Graphics)].familyFound = true;
 
             if(presentSupported)
             {
-                mQueueFamilies[(int)CustomVKStructs::RequiredVkFamilies::Present].familyIndex = queue_index;
-                mQueueFamilies[(int)CustomVKStructs::RequiredVkFamilies::Present].familyFound = true;
+                mQueueFamilies[static_cast<int>(CustomVKStructs::RequiredVkFamilies::Present)].familyIndex = queue_index;
+                mQueueFamilies[static_cast<int>(CustomVKStructs::RequiredVkFamilies::Present)].familyFound = true;
                 break;
             }
         }
@@ -141,8 +137,8 @@ bool CustomPD::FindQueueFamilies(const std::unique_ptr<CustomSurface>& surface){
         if(presentSupported)
         {
             std::cout << "Present Queue found\n";
-            mQueueFamilies[(int)CustomVKStructs::RequiredVkFamilies::Present].familyIndex = queue_index;
-            mQueueFamilies[(int)CustomVKStructs::RequiredVkFamilies::Present].familyFound = true;
+            mQueueFamilies[static_cast<int>(CustomVKStructs::RequiredVkFamilies::Present)].familyIndex = queue_index;
+            mQueueFamilies[static_cast<int>(CustomVKStructs::RequiredVkFamilies::Present)].familyFound = true;
         }
     }
 

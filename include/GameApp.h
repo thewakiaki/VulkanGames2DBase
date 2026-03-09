@@ -16,6 +16,7 @@
 class GameApp
 {
 public:
+
     GameApp();
     void Cleanup();
 

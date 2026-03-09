@@ -10,6 +10,7 @@ namespace CustomVKStructs {
 
     struct PhysicalDeviceScore {
         PhysicalDeviceScore() = default;
+
         PhysicalDeviceScore(int scr, std::unique_ptr<vk::raii::PhysicalDevice> device) : score(scr), physical_device{std::move(device)} {}
 
         void SetDevice(std::unique_ptr<vk::raii::PhysicalDevice> device) { physical_device = std::move(device);}

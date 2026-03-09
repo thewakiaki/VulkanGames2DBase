@@ -6,6 +6,9 @@
 #define VULKANGAMES2DBASE_GAMEWINDOW_H
 
 
+#include "vulkan/vulkan.hpp"
+class Renderer;
+
 class GameWindow {
 public:
     GameWindow();
@@ -14,13 +17,23 @@ public:
     static constexpr uint32_t initial_window_width = 800;
     static constexpr uint32_t initial_window_height = 600;
 
-    inline GLFWwindow* GetWindow() const { return mGame_window;}
+    [[nodiscard]] GLFWwindow* GetWindow() const { return mGame_window;}
 
     bool InitGameWindow();
 
-    void CleanupGameWindow() const;
+    void Cleanup();
+
+    static void FrameBufferResizeCallback(GLFWwindow* window, int width, int height);
+
+    void SetRenderer(Renderer* renderer) { mRenderer = renderer; }
+
+
 private:
+    [[nodiscard]] vk::Extent2D GetFrameBufferSize() const;
+
     GLFWwindow* mGame_window;
+
+    Renderer* mRenderer = nullptr;
 
     const char* mGame_Title = "Game Title";
 

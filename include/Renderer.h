@@ -11,24 +11,28 @@
 class Renderer{
 
 public:
-    Renderer(const std::unique_ptr<CustomSC>& swapchain);
+
+    explicit Renderer(const std::unique_ptr<CustomSC>& swapchain);
     void Cleanup();
 
     bool CreateSyncObjects(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain);
 
     bool DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain, const std::unique_ptr<CmdBuffer>& cmdBuffer,
-                   const std::unique_ptr<GraphicsPipeline>& pipeline);
+                   const std::unique_ptr<GraphicsPipeline>& pipeline, GLFWwindow* window, const std::unique_ptr<CustomSurface>& surface,const std::unique_ptr<CustomPD>& pDevice);
 
-    inline const vk::Viewport GetViewport() const {return mViewport; }
-    inline const vk::Rect2D GetScissor() const {return mScissor; }
+    [[nodiscard]] vk::Viewport GetViewport() const {return mViewport; }
+    [[nodiscard]] vk::Rect2D GetScissor() const {return mScissor; }
+
+    inline void ResizeFrameBuffer() { mFrameBufferResized = true; }
 
 private:
 
     bool SetupSemaphores(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain);
     bool SetupFences(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain);
-    bool GetNextImage(const std::unique_ptr<CustomSC>& swapchain);
+    bool GetNextImage(const std::unique_ptr<CustomSC>& swapchain, GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,
+                      const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice);
 
-    void RecordCommandBuffer(const std::unique_ptr<CustomLD>& lDevice);
+    //void RecordCommandBuffer(const std::unique_ptr<CustomLD>& lDevice);
     vk::SubmitInfo SubmitCommandBuffer(const std::unique_ptr<CmdBuffer>& cmdBuffer);
     vk::PresentInfoKHR PresentToSwapchain(const std::unique_ptr<CustomSC>& swapchain);
 
@@ -41,6 +45,8 @@ private:
 
     uint32_t mCurrentFrame = 0;
     uint32_t mImageIndex = 0;
+
+    bool mFrameBufferResized = false;
 };
 
 #endif // RENDERER_H

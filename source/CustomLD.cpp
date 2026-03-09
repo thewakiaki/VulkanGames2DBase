@@ -16,11 +16,11 @@ void CustomLD::Cleanup(){
 
 bool CustomLD::CreateLogicalDevice(const CustomPD& device){
 
-    const uint32_t& graphicsFamily = device.GetFamilies()[(int)CustomVKStructs::RequiredVkFamilies::Graphics].familyIndex;
-    const uint32_t& presentFamily =  device.GetFamilies()[(int)CustomVKStructs::RequiredVkFamilies::Present].familyIndex;
+    const uint32_t& graphicsFamily = device.GetFamilies()[static_cast<int>(CustomVKStructs::RequiredVkFamilies::Graphics)].familyIndex;
+    const uint32_t& presentFamily =  device.GetFamilies()[static_cast<int>(CustomVKStructs::RequiredVkFamilies::Present)].familyIndex;
 
     vk::DeviceQueueCreateInfo queueCreateInfo;
-    const float queuePriority = 0.5f;
+    constexpr float queuePriority = 0.5f;
     queueCreateInfo.setQueueFamilyIndex(graphicsFamily);
     queueCreateInfo.setQueueCount(1);
     queueCreateInfo.setPQueuePriorities(&queuePriority);
@@ -59,7 +59,7 @@ bool CustomLD::CreateLogicalDevice(const CustomPD& device){
     deviceCreateInfo.setPNext(&features);
 
     vk::DeviceQueueCreateInfo graphicsQueueInfo{};
-    graphicsQueueInfo.setQueueFamilyIndex(device.GetFamilies()[(int)CustomVKStructs::RequiredVkFamilies::Graphics].familyIndex);
+    graphicsQueueInfo.setQueueFamilyIndex(device.GetFamilies()[static_cast<int>(CustomVKStructs::RequiredVkFamilies::Graphics)].familyIndex);
     graphicsQueueInfo.setQueueCount(1);
     graphicsQueueInfo.setPQueuePriorities(&queuePriority);
     deviceQueueInfos.emplace_back(graphicsQueueInfo);
@@ -92,7 +92,7 @@ bool CustomLD::CreateLogicalDevice(const CustomPD& device){
 
         return true;
     } catch (const vk::SystemError& err) {
-        std::cerr << "Failed to Create Device\n";
+        std::cerr << "Failed to Create Device Error: " << err.what() << "\n";
         return false;
     }
 
