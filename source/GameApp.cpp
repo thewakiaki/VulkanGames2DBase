@@ -57,15 +57,13 @@ bool GameApp::GameStart()
 
     if(!mCommandPool->CreateCommandPool(mPhysicalDevice, mLogicalDevice)) { return false; }
 
-    if (!mVertexBuffer->SetupVertexBuffer(mPhysicalDevice, mLogicalDevice, mVertices)) { return false;}
-
     if(!mCommandPool->CreateCommandBuffers(mLogicalDevice)) { return false; }
 
     if(!mRenderer->CreateSyncObjects(mLogicalDevice, mSwapChain)) { return false; }
 
+    if (!mVertexBuffer->SetupBuffers(mPhysicalDevice, mLogicalDevice, mVertices)) { return false;}
+
     mGameWindow->SetRenderer(mRenderer.get());
-
-
 
     return true;
 }
@@ -120,6 +118,7 @@ void GameApp::InitEngineComponents(){
     mRenderer = std::make_unique<Renderer>(mSwapChain);
     mVertexBuffer = std::make_unique<CustomVertexBuffer>();
 
+    //just test thing to draw
     mVertices = {
         {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
         {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
