@@ -7,7 +7,7 @@ bool GraphicsPipeline::SetupShaders(){
     mVertShader = std::make_unique<CustomSM>();
     mFragShader = std::make_unique<CustomSM>();
 
-    if(!mVertShader->CreateShaderModule(mLogicalDevice, "../assets/shaders/vert.spv"))
+    if(!mVertShader->CreateShaderModule(mLogicalDevice, "../assets/shaders/slang.spv"))
     {
         std::cerr << "Failed to create vertex shader module\n";
         return false;
@@ -15,7 +15,7 @@ bool GraphicsPipeline::SetupShaders(){
 
     std::cout << "Succesfully created vertex shader module\n";
 
-    if(!mFragShader->CreateShaderModule(mLogicalDevice, "../assets/shaders/frag.spv"))
+    if(!mFragShader->CreateShaderModule(mLogicalDevice, "../assets/shaders/slang.spv"))
     {
         std::cerr << "Failed to create fragment shader module\n";
         return false;
@@ -48,12 +48,12 @@ bool GraphicsPipeline::CreatePipeline(const std::unique_ptr<CustomSC>& swapchain
     vk::PipelineShaderStageCreateInfo shaderStages[] = {vertCreateInfo, fragCreateInfo};
 
     SetPipelineDynamicCreateInfo(dynamicInfo);
-    SetPipelineVertInputCreateInfo(vertInputInfo);
-    SetPipelineInputAssemblyCreateInfo(inputAssemblyInfo);
     SetPipelineRasterCreateInfo(rasterCreateInfo);
     SetPipelineColorBlendCreateInfo(colorBlendInfo);
     SetPiplineRenderCreateInfo(renderInfo, swapchain);
+    SetPipelineInputAssemblyCreateInfo(inputAssemblyInfo);
     SetPipelineLayoutCreateInfo(layoutCreatInfo);
+    SetPipelineVertInputCreateInfo(vertInputInfo);
     SetGraphicsPipelineCreateInfo(pipelineInfo, shaderStages, vertInputInfo, inputAssemblyInfo, viewportStateInfo, rasterCreateInfo, multisampleInfo, colorBlendInfo, dynamicInfo, renderInfo);
 
     try {
@@ -74,7 +74,7 @@ void GraphicsPipeline::SetPipelineVertShaderCreateInfo(vk::PipelineShaderStageCr
 
     info.setStage(vk::ShaderStageFlagBits::eVertex);
     info.setModule(*shader->GetShaderModule());
-    info.setPName("main");
+    info.setPName("vertMain");
     info.setPSpecializationInfo(nullptr);
     info.setFlags({});
 }
@@ -83,7 +83,7 @@ void GraphicsPipeline::SetPipelineFragShaderCreateInfo(vk::PipelineShaderStageCr
 
     info.setStage(vk::ShaderStageFlagBits::eFragment);
     info.setModule(*shader->GetShaderModule());
-    info.setPName("main");
+    info.setPName("fragMain");
     info.setPSpecializationInfo(nullptr);
     info.setFlags({});
 }
@@ -98,10 +98,13 @@ void GraphicsPipeline::SetPipelineDynamicCreateInfo(vk::PipelineDynamicStateCrea
 
 void GraphicsPipeline::SetPipelineVertInputCreateInfo(vk::PipelineVertexInputStateCreateInfo& info){
 
-    //glsl used so no buffer needed
+    mBinding = CustomVKStructs::Vertex::getBindingDescription();
+    mAttributes = CustomVKStructs::Vertex::getAttributeDescriptions();
 
-    info.setVertexBindingDescriptions({});
-    info.setVertexAttributeDescriptions({});
+    info.setVertexBindingDescriptionCount(1);
+    info.setPVertexBindingDescriptions(&mBinding);
+    info.setVertexAttributeDescriptionCount(mAttributes.size());
+    info.setPVertexAttributeDescriptions(mAttributes.data());
 }
 
 void GraphicsPipeline::SetPipelineInputAssemblyCreateInfo(vk::PipelineInputAssemblyStateCreateInfo& info){

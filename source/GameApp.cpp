@@ -57,6 +57,8 @@ bool GameApp::GameStart()
 
     if(!mCommandPool->CreateCommandPool(mPhysicalDevice, mLogicalDevice)) { return false; }
 
+    if (!mVertexBuffer->SetupVertexBuffer(mPhysicalDevice, mLogicalDevice, mVertices)) { return false;}
+
     if(!mCommandPool->CreateCommandBuffers(mLogicalDevice)) { return false; }
 
     if(!mRenderer->CreateSyncObjects(mLogicalDevice, mSwapChain)) { return false; }
@@ -76,7 +78,7 @@ bool GameApp::GamePlaying()
     {
         glfwPollEvents();
 
-        mRenderer->DrawFrame(mLogicalDevice, mSwapChain, mCommandPool, mGraphicsPipeline, mGameWindow->GetWindow(), mCustomSurface, mPhysicalDevice);
+        mRenderer->DrawFrame(mLogicalDevice, mSwapChain, mCommandPool, mGraphicsPipeline, mGameWindow->GetWindow(), mCustomSurface, mPhysicalDevice, mVertexBuffer);
 
         if (glfwGetKey(mGameWindow->GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
                   glfwSetWindowShouldClose(mGameWindow->GetWindow(), true);
@@ -93,6 +95,7 @@ void GameApp::GameEnd()
     mLogicalDevice->GetLogicalDevice()->waitIdle();
 
     mRenderer->Cleanup();
+    mVertexBuffer->Cleanup();
     mCommandPool->Cleanup();
     mGraphicsPipeline->Cleanup();
     mSwapChain->Cleanup();
@@ -115,6 +118,13 @@ void GameApp::InitEngineComponents(){
     mGraphicsPipeline = std::make_unique<GraphicsPipeline>(*mLogicalDevice);
     mCommandPool = std::make_unique<CmdBuffer>();
     mRenderer = std::make_unique<Renderer>(mSwapChain);
+    mVertexBuffer = std::make_unique<CustomVertexBuffer>();
+
+    mVertices = {
+        {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+        {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+    };
 }
 
 void GameApp::Cleanup(){
@@ -127,4 +137,5 @@ void GameApp::Cleanup(){
     mGraphicsPipeline.reset();
     mCommandPool.reset();
     mRenderer.reset();
+    mVertexBuffer.reset();
 }

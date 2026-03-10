@@ -4,6 +4,7 @@
 #include "CustomPD.h"
 #include "CustomLD.h"
 #include "CustomSC.h"
+#include "CustomVertexBuffer.h"
 #include "GraphicsPipeline.h"
 
 class CmdBuffer{
@@ -20,7 +21,8 @@ public:
     //void BeginRenderPass(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex);
     void BindToGraphicsPipeline(uint32_t frameIndex, const std::unique_ptr<GraphicsPipeline>& pipeline) const;
     //void EndRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex);
-    void RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex, const std::unique_ptr<GraphicsPipeline>& pipeline, uint32_t frameIndex);
+    void RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex, const std::unique_ptr<GraphicsPipeline>& pipeline, uint32_t frameIndex,
+                             const std::unique_ptr<CustomVertexBuffer>& vertexBuffer);
 
     [[nodiscard]] const std::unique_ptr<vk::raii::CommandBuffer>& GetCommandBuffer() const { return mCommandBuffer; }
     [[nodiscard]] vk::raii::CommandBuffers& GetCommandBuffers() const { return *mCommandBuffers; }

@@ -11,6 +11,7 @@
 #include <GLFW/glfw3native.h>
 #include <SDL3/SDL.h>
 #include <SDL3_mixer/SDL_mixer.h>
+#include <glm/glm.hpp>
 
 #include <iostream>
 #include <stdexcept>

@@ -46,6 +46,9 @@ private:
 
     std::vector<vk::DynamicState> mDynamicStates;
 
+    vk::VertexInputBindingDescription mBinding;
+    std::array<vk::VertexInputAttributeDescription, 2> mAttributes;
+
 };
 
 #endif // GRAPHICS_PIPELINE_H

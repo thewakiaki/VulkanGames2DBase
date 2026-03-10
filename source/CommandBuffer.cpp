@@ -79,7 +79,7 @@ bool CmdBuffer::CreateCommandBuffers(const std::unique_ptr<CustomLD>& lDevice){
 }
 
 void CmdBuffer::RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex,
-                                    const std::unique_ptr<GraphicsPipeline>& pipeline, uint32_t frameIndex) {
+                                    const std::unique_ptr<GraphicsPipeline>& pipeline, uint32_t frameIndex, const std::unique_ptr<CustomVertexBuffer>& vertexBuffer) {
 
     GetCommandBuffers()[frameIndex].reset(vk::CommandBufferResetFlagBits::eReleaseResources);
 
@@ -94,6 +94,8 @@ void CmdBuffer::RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, 
     SetViewportScissor(swapchain, frameIndex);
 
     BindToGraphicsPipeline(frameIndex, pipeline);
+
+    GetCommandBuffers()[frameIndex].bindVertexBuffers(0, {*vertexBuffer->GetVertexBuffer()}, {0});
 
     GetCommandBuffers()[frameIndex].draw(3, 1, 0, 0);
 

@@ -11,6 +11,7 @@
 #include "CustomSC.h"
 #include "GraphicsPipeline.h"
 #include "CommandBuffer.h"
+#include "CustomVertexBuffer.h"
 #include "Renderer.h"
 
 class GameApp
@@ -35,6 +36,8 @@ private:
     bool mPlaying = false;
     bool mGame_Paused = false;
 
+    std::vector<CustomVKStructs::Vertex> mVertices;
+
     std::unique_ptr<VkSetup> mVkInstance;
     std::unique_ptr<CustomPD> mPhysicalDevice;
     std::unique_ptr<CustomLD> mLogicalDevice;
@@ -44,6 +47,7 @@ private:
     std::unique_ptr<GraphicsPipeline> mGraphicsPipeline;
     std::unique_ptr<CmdBuffer> mCommandPool;
     std::unique_ptr<Renderer> mRenderer;
+    std::unique_ptr<CustomVertexBuffer> mVertexBuffer;
 
 };
 

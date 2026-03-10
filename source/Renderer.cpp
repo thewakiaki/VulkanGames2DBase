@@ -7,7 +7,8 @@ Renderer::Renderer(const std::unique_ptr<CustomSC>& swapchain){
 }
 
 bool Renderer::DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain, const std::unique_ptr<CmdBuffer>& cmdBuffer,
-               const std::unique_ptr<GraphicsPipeline>& pipeline, GLFWwindow* window, const std::unique_ptr<CustomSurface>& surface,const std::unique_ptr<CustomPD>& pDevice){
+               const std::unique_ptr<GraphicsPipeline>& pipeline, GLFWwindow* window, const std::unique_ptr<CustomSurface>& surface,const std::unique_ptr<CustomPD>& pDevice,
+               const std::unique_ptr<CustomVertexBuffer>& vertexBuffer){
 
     vk::Result fenceResult = lDevice->GetLogicalDevice()->waitForFences(*mDrawFences[mCurrentFrame], vk::True, UINT64_MAX);
 
@@ -32,7 +33,7 @@ bool Renderer::DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::un
 
     cmdBuffer->GetCommandBuffers()[mCurrentFrame].reset();
 
-    cmdBuffer->RecordCommandBuffer(swapchain, mImageIndex, pipeline, mCurrentFrame);
+    cmdBuffer->RecordCommandBuffer(swapchain, mImageIndex, pipeline, mCurrentFrame, vertexBuffer);
 
     lDevice->GetGraphicsQueue()->submit(SubmitCommandBuffer(cmdBuffer), *mDrawFences[mCurrentFrame]);
 
