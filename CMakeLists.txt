@@ -42,8 +42,12 @@ add_executable(VulkanGame
 		source/CommandBuffer.cpp
 		include/Renderer.h
 		source/Renderer.cpp
-		source/CustomVertexBuffer.cpp
-		include/CustomVertexBuffer.h
+		source/RenderBuffer.cpp
+		include/RenderBuffer.h
+		source/VertexBuffer.cpp
+		include/VertexBuffer.h
+		source/IndexBuffer.cpp
+		include/IndexBuffer.h
 )
 
 target_precompile_headers(VulkanGame PRIVATE include/pch.h)

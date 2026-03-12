@@ -53,6 +53,13 @@ namespace CustomVKStructs {
         }
     };
 
+    enum class BufferType
+    {
+        VERTEX_BUFFER = 0,
+        STAGING_BUFFER = 1,
+        INDEX_BUFFER = 2
+    };
+
 }
 
 #endif //VULKANGAMES2DBASE_CUSTOMVKSTRUCTS_H

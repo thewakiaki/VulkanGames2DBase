@@ -6,9 +6,9 @@ Renderer::Renderer(const std::unique_ptr<CustomSC>& swapchain){
     mScissor = vk::Rect2D {vk::Offset2D{0,0}, swapchain->GetExtent()};
 }
 
-bool Renderer::DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain, const std::unique_ptr<CmdBuffer>& cmdBuffer,
+void Renderer::DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain, const std::unique_ptr<CmdBuffer>& cmdBuffer,
                const std::unique_ptr<GraphicsPipeline>& pipeline, GLFWwindow* window, const std::unique_ptr<CustomSurface>& surface,const std::unique_ptr<CustomPD>& pDevice,
-               const std::unique_ptr<CustomVertexBuffer>& vertexBuffer){
+               const std::unique_ptr<VertexBuffer>& vertexBuffer, const std::unique_ptr<IndexBuffer>& indexBuffer, const std::vector<uint16_t> &indices){
 
     vk::Result fenceResult = lDevice->GetLogicalDevice()->waitForFences(*mDrawFences[mCurrentFrame], vk::True, UINT64_MAX);
 
@@ -28,12 +28,12 @@ bool Renderer::DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::un
     if (mNeedToRecreateSwapchain) {
         swapchain->RecreateSwapChain(window, surface, pDevice, lDevice);
         mNeedToRecreateSwapchain = false;
-        return true;
+        return;
     }
 
     cmdBuffer->GetCommandBuffers()[mCurrentFrame].reset();
 
-    cmdBuffer->RecordCommandBuffer(swapchain, mImageIndex, pipeline, mCurrentFrame, vertexBuffer);
+    cmdBuffer->RecordCommandBuffer(swapchain, mImageIndex, pipeline, mCurrentFrame, vertexBuffer, indexBuffer, indices);
 
     lDevice->GetGraphicsQueue()->submit(SubmitCommandBuffer(cmdBuffer), *mDrawFences[mCurrentFrame]);
 
@@ -42,12 +42,10 @@ bool Renderer::DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::un
     if (presentResult == vk::Result::eErrorOutOfDateKHR || presentResult == vk::Result::eSuboptimalKHR || mFrameBufferResized)
     {
         mFrameBufferResized = false;
-        return true;
+        return;
     }
 
     mCurrentFrame = (mCurrentFrame + 1 ) % CustomVKStructs::MAX_FRAMES_IN_FLIGHT;
-
-    return true;
 }
 
 bool Renderer::CreateSyncObjects(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain){

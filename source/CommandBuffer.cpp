@@ -1,6 +1,8 @@
 #include "CommandBuffer.h"
 #include "CustomVkStructs.h"
 #include "GraphicsPipeline.h"
+#include "IndexBuffer.h"
+
 
 void CmdBuffer::Cleanup(){
     mCommandBuffer.reset();
@@ -79,7 +81,8 @@ bool CmdBuffer::CreateCommandBuffers(const std::unique_ptr<CustomLD>& lDevice){
 }
 
 void CmdBuffer::RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex,
-                                    const std::unique_ptr<GraphicsPipeline>& pipeline, uint32_t frameIndex, const std::unique_ptr<CustomVertexBuffer>& vertexBuffer) {
+                                    const std::unique_ptr<GraphicsPipeline>& pipeline, uint32_t frameIndex, const std::unique_ptr<VertexBuffer>& vertexBuffer,
+                                    const std::unique_ptr<IndexBuffer>& indexBuffer, const std::vector<uint16_t> &indices) {
 
     GetCommandBuffers()[frameIndex].reset(vk::CommandBufferResetFlagBits::eReleaseResources);
 
@@ -95,9 +98,11 @@ void CmdBuffer::RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, 
 
     BindToGraphicsPipeline(frameIndex, pipeline);
 
-    GetCommandBuffers()[frameIndex].bindVertexBuffers(0, {*vertexBuffer->GetVertexBuffer()}, {0});
+    GetCommandBuffers()[frameIndex].bindVertexBuffers(0, {*vertexBuffer->GetBuffer()}, {0});
+    //GetCommandBuffers()[frameIndex].bindIndexBuffer(*indexBuffer->GetBuffer(), 0, vk::IndexType::eUint16);
 
-    GetCommandBuffers()[frameIndex].draw(3, 1, 0, 0);
+    //GetCommandBuffers()[frameIndex].drawIndexed(indices.size(), 1, 0, 0, 0);
+    GetCommandBuffers()[frameIndex].draw(3, 1, 1, 0);
 
     GetCommandBuffers()[frameIndex].endRendering();
 
@@ -171,4 +176,31 @@ void CmdBuffer::SetViewportScissor(const std::unique_ptr<CustomSC>& swapchain, u
 
     GetCommandBuffers()[frameIndex].setViewport(0, {viewport});
     GetCommandBuffers()[frameIndex].setScissor(0, vk::Rect2D{vk::Offset2D(0, 0), swapExtent});
+}
+
+void CmdBuffer::CopyRenderBuffer(const std::unique_ptr<vk::raii::Buffer> &srcBuffer,
+    const std::unique_ptr<vk::raii::Buffer> &dstBuffer, vk::DeviceSize size, const std::unique_ptr<CustomLD>& lDevice) {
+
+    vk::CommandBufferAllocateInfo commandBufferAllocateInfo;
+    commandBufferAllocateInfo.setCommandPool(*mCommandPool);
+    commandBufferAllocateInfo.setLevel(vk::CommandBufferLevel::ePrimary);
+    commandBufferAllocateInfo.setCommandBufferCount(1);
+
+    vk::raii::CommandBuffer copyCommandBuffer = std::move(lDevice->GetLogicalDevice()->allocateCommandBuffers(commandBufferAllocateInfo).front());
+
+    vk::CommandBufferBeginInfo beginInfo;
+    beginInfo.setFlags(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
+
+    copyCommandBuffer.begin(beginInfo);
+
+    copyCommandBuffer.copyBuffer(*srcBuffer, *dstBuffer, vk::BufferCopy(0, 0, size));
+
+    copyCommandBuffer.end();
+
+    vk::SubmitInfo submitInfo;
+    submitInfo.setCommandBufferCount(1);
+    submitInfo.setPCommandBuffers(&*copyCommandBuffer);
+
+    lDevice->GetGraphicsQueue()->submit(submitInfo, nullptr);
+    lDevice->GetGraphicsQueue()->waitIdle();
 }

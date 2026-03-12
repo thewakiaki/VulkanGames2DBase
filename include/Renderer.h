@@ -14,14 +14,14 @@ public:
 
     bool CreateSyncObjects(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain);
 
-    bool DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain, const std::unique_ptr<CmdBuffer>& cmdBuffer,
+    void DrawFrame(const std::unique_ptr<CustomLD>& lDevice, const std::unique_ptr<CustomSC>& swapchain, const std::unique_ptr<CmdBuffer>& cmdBuffer,
                    const std::unique_ptr<GraphicsPipeline>& pipeline, GLFWwindow* window, const std::unique_ptr<CustomSurface>& surface,const std::unique_ptr<CustomPD>& pDevice,
-                   const std::unique_ptr<CustomVertexBuffer>& vertexBuffer);
+                   const std::unique_ptr<VertexBuffer>& vertexBuffer, const std::unique_ptr<IndexBuffer>& indexBuffer, const std::vector<uint16_t> &indices);
 
     [[nodiscard]] vk::Viewport GetViewport() const {return mViewport; }
     [[nodiscard]] vk::Rect2D GetScissor() const {return mScissor; }
 
-    inline void ResizeFrameBuffer() { mFrameBufferResized = true; }
+    void ResizeFrameBuffer() { mFrameBufferResized = true; }
 
 private:
 

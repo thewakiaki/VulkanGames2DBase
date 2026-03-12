@@ -47,6 +47,12 @@ bool GraphicsPipeline::CreatePipeline(const std::unique_ptr<CustomSC>& swapchain
 
     vk::PipelineShaderStageCreateInfo shaderStages[] = {vertCreateInfo, fragCreateInfo};
 
+    vk::PipelineDepthStencilStateCreateInfo depthStencil{};
+    depthStencil.setDepthTestEnable(VK_FALSE);
+    depthStencil.setDepthWriteEnable(VK_FALSE);
+
+    pipelineInfo.setPDepthStencilState(&depthStencil);
+
     SetPipelineDynamicCreateInfo(dynamicInfo);
     SetPipelineRasterCreateInfo(rasterCreateInfo);
     SetPipelineColorBlendCreateInfo(colorBlendInfo);
@@ -117,7 +123,7 @@ void GraphicsPipeline::SetPipelineRasterCreateInfo(vk::PipelineRasterizationStat
     info.setDepthClampEnable(vk::False);
     info.setRasterizerDiscardEnable(vk::False);
     info.setPolygonMode(vk::PolygonMode::eFill);
-    info.setCullMode(vk::CullModeFlagBits::eBack);
+    info.setCullMode(vk::CullModeFlagBits::eNone);
     info.setFrontFace(vk::FrontFace::eClockwise);
     info.setDepthBiasEnable(vk::False);
     info.setDepthBiasSlopeFactor(1.0f);

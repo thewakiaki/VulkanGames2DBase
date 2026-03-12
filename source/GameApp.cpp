@@ -18,6 +18,8 @@ bool GameApp::Run()
 {
     std::cout << "Game Starting Up\n";
 
+    //comment or uncomment for x11 to test with renderdoc
+    glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
 
     if(!glfwInit()){
         std::cerr << "Failed to init glfw\n";
@@ -55,13 +57,19 @@ bool GameApp::GameStart()
 
     if(!mGraphicsPipeline->CreatePipeline(mSwapChain)) { return false; }
 
-    if(!mCommandPool->CreateCommandPool(mPhysicalDevice, mLogicalDevice)) { return false; }
+    if(!mCommandBuffer->CreateCommandPool(mPhysicalDevice, mLogicalDevice)) { return false; }
 
-    if(!mCommandPool->CreateCommandBuffers(mLogicalDevice)) { return false; }
+    if(!mCommandBuffer->CreateCommandBuffers(mLogicalDevice)) { return false; }
 
     if(!mRenderer->CreateSyncObjects(mLogicalDevice, mSwapChain)) { return false; }
 
-    if (!mVertexBuffer->SetupBuffers(mPhysicalDevice, mLogicalDevice, mVertices)) { return false;}
+    if (!mVertexBuffer->SetupBuffers(mLogicalDevice, mPhysicalDevice, mVertices)) { return false; }
+
+    mVertexBuffer->CopyStagingData(mCommandBuffer, mLogicalDevice);
+
+    if (!mIndexBuffer->SetupBuffers(mLogicalDevice, mPhysicalDevice, mIndices)) { return false; }
+
+    mIndexBuffer->CopyStagingData(mCommandBuffer, mLogicalDevice);
 
     mGameWindow->SetRenderer(mRenderer.get());
 
@@ -76,7 +84,8 @@ bool GameApp::GamePlaying()
     {
         glfwPollEvents();
 
-        mRenderer->DrawFrame(mLogicalDevice, mSwapChain, mCommandPool, mGraphicsPipeline, mGameWindow->GetWindow(), mCustomSurface, mPhysicalDevice, mVertexBuffer);
+        mRenderer->DrawFrame(mLogicalDevice, mSwapChain, mCommandBuffer, mGraphicsPipeline, mGameWindow->GetWindow(), mCustomSurface, mPhysicalDevice, mVertexBuffer,
+                             mIndexBuffer, mIndices);
 
         if (glfwGetKey(mGameWindow->GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
                   glfwSetWindowShouldClose(mGameWindow->GetWindow(), true);
@@ -88,13 +97,13 @@ bool GameApp::GamePlaying()
     return true;
 }
 
-void GameApp::GameEnd()
-{
+void GameApp::GameEnd() const {
     mLogicalDevice->GetLogicalDevice()->waitIdle();
 
     mRenderer->Cleanup();
+    mIndexBuffer->Cleanup();
     mVertexBuffer->Cleanup();
-    mCommandPool->Cleanup();
+    mCommandBuffer->Cleanup();
     mGraphicsPipeline->Cleanup();
     mSwapChain->Cleanup();
     mLogicalDevice->Cleanup();
@@ -102,6 +111,7 @@ void GameApp::GameEnd()
     mCustomSurface->Cleanup();
     mVkInstance->Cleanup();
     mGameWindow->Cleanup();
+
 
     std::cout << "Game Finished\n";
 }
@@ -114,16 +124,19 @@ void GameApp::InitEngineComponents(){
     mLogicalDevice = std::make_unique<CustomLD>();
     mSwapChain = std::make_unique<CustomSC>();
     mGraphicsPipeline = std::make_unique<GraphicsPipeline>(*mLogicalDevice);
-    mCommandPool = std::make_unique<CmdBuffer>();
+    mCommandBuffer = std::make_unique<CmdBuffer>();
     mRenderer = std::make_unique<Renderer>(mSwapChain);
-    mVertexBuffer = std::make_unique<CustomVertexBuffer>();
+    mVertexBuffer = std::make_unique<VertexBuffer>();
+    mIndexBuffer = std::make_unique<IndexBuffer>();
 
     //just test thing to draw
     mVertices = {
-        {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+        {{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f }},
         {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
         {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
     };
+
+    mIndices = { 0, 1, 2, 2, 3, 0};
 }
 
 void GameApp::Cleanup(){
@@ -134,7 +147,8 @@ void GameApp::Cleanup(){
     mLogicalDevice.reset();
     mSwapChain.reset();
     mGraphicsPipeline.reset();
-    mCommandPool.reset();
+    mCommandBuffer.reset();
     mRenderer.reset();
     mVertexBuffer.reset();
+    mIndexBuffer.reset();
 }

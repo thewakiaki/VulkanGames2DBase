@@ -4,8 +4,9 @@
 #include "CustomPD.h"
 #include "CustomLD.h"
 #include "CustomSC.h"
-#include "CustomVertexBuffer.h"
+#include "VertexBuffer.h"
 #include "GraphicsPipeline.h"
+#include "IndexBuffer.h"
 
 class CmdBuffer{
 
@@ -22,7 +23,10 @@ public:
     void BindToGraphicsPipeline(uint32_t frameIndex, const std::unique_ptr<GraphicsPipeline>& pipeline) const;
     //void EndRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex);
     void RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex, const std::unique_ptr<GraphicsPipeline>& pipeline, uint32_t frameIndex,
-                             const std::unique_ptr<CustomVertexBuffer>& vertexBuffer);
+                             const std::unique_ptr<VertexBuffer>& vertexBuffer, const std::unique_ptr<IndexBuffer>& indexBuffer, const std::vector<uint16_t> &indices);
+
+    void CopyRenderBuffer(const  std::unique_ptr<vk::raii::Buffer>& srcBuffer, const  std::unique_ptr<vk::raii::Buffer>& dstBuffer,
+                          vk::DeviceSize size, const std::unique_ptr<CustomLD>& lDevice);
 
     [[nodiscard]] const std::unique_ptr<vk::raii::CommandBuffer>& GetCommandBuffer() const { return mCommandBuffer; }
     [[nodiscard]] vk::raii::CommandBuffers& GetCommandBuffers() const { return *mCommandBuffers; }
@@ -34,6 +38,8 @@ private:
                                vk::PipelineStageFlags2 dstStageMask) const;
 
     void SetViewportScissor(const std::unique_ptr<CustomSC>& swapchain, uint32_t frameIndex) const;
+
+
 
     std::unique_ptr<vk::raii::CommandPool> mCommandPool;
 
