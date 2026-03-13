@@ -1,8 +1,8 @@
-#include "../include/CustomSurface.h"
+#include "../include/VulkanSurface.h"
 
 
 
-bool CustomSurface::CreateSurface(const std::unique_ptr<vk::raii::Instance>& vkInstance, GLFWwindow* window){
+bool VulkanSurface::CreateSurface(const std::unique_ptr<vk::raii::Instance>& vkInstance, GLFWwindow* window){
 
     VkSurfaceKHR rawSurface;
 
@@ -19,7 +19,7 @@ bool CustomSurface::CreateSurface(const std::unique_ptr<vk::raii::Instance>& vkI
     return true;
 }
 
-bool CustomSurface::SelectSurfaceFormat(){
+bool VulkanSurface::SelectSurfaceFormat(){
 
     bool formatFound = false;
 
@@ -43,7 +43,7 @@ bool CustomSurface::SelectSurfaceFormat(){
     return true;
 }
 
-bool CustomSurface::SelectPresentMode(){
+bool VulkanSurface::SelectPresentMode(){
 
     bool foundMode = false;
 
@@ -68,7 +68,7 @@ bool CustomSurface::SelectPresentMode(){
 }
 
 
-bool CustomSurface::SetupSurfaceCapabilities(GLFWwindow* window){
+bool VulkanSurface::SetupSurfaceCapabilities(GLFWwindow* window){
 
 
     if (mSurfaceCapabilities.minImageExtent.width == 0 || mSurfaceCapabilities.minImageExtent.height == 0) {
@@ -93,7 +93,7 @@ bool CustomSurface::SetupSurfaceCapabilities(GLFWwindow* window){
     return true;
 }
 
-bool CustomSurface::SetupSurfaceVariables(GLFWwindow* window) {
+bool VulkanSurface::SetupSurfaceVariables(GLFWwindow* window) {
 
     if(!SelectSurfaceFormat()) { return false; }
     if(!SelectPresentMode()) { return false; }
@@ -102,6 +102,6 @@ bool CustomSurface::SetupSurfaceVariables(GLFWwindow* window) {
     return true;
 }
 
-void CustomSurface::Cleanup(){
+void VulkanSurface::Cleanup(){
     mSurface.reset();
 }

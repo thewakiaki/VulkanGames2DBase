@@ -5,11 +5,11 @@
 #ifndef VULKANGAMES2DBASE_VKSETUP_H
 #define VULKANGAMES2DBASE_VKSETUP_H
 
-class VkSetup
+class VulkanInstance
 {
 public:
-    VkSetup() = default;
-    ~VkSetup() = default;
+    VulkanInstance() = default;
+    ~VulkanInstance() = default;
 
     void Cleanup();
 
@@ -23,7 +23,6 @@ private:
     bool CheckExtensions(const vk::raii::Context& vContext, const uint32_t& extensionCount, const char** extensions);
 
     std::unique_ptr<vk::raii::Instance> mVulkanInstance;
-    vk::raii::Context mContext;
     std::vector<const char*> mInstanceExtensions;
 };
 

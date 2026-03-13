@@ -1,22 +1,22 @@
 #ifndef SWAPCHAIN_H
 #define SWAPCHAIN_H
 
-#include "CustomLD.h"
-#include "CustomPD.h"
-#include "CustomSurface.h"
+#include "VulkanLogicalDevice.h"
+#include "VulkanPhysicalDevice.h"
+#include "VulkanSurface.h"
 
-class CustomSC {
+class VulkanSwapChain {
 public:
 
-    bool CreateSwapchain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,
-                         const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice);
+    bool CreateSwapchain(GLFWwindow* window,const std::unique_ptr<VulkanSurface>& surface,
+                         const std::unique_ptr<VulkanPhysicalDevice>& pDevice, const std::unique_ptr<VulkanLogicalDevice>& lDevice);
 
-    bool RecreateSwapChain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,
-                           const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice);
+    bool RecreateSwapChain(GLFWwindow* window,const std::unique_ptr<VulkanSurface>& surface,
+                           const std::unique_ptr<VulkanPhysicalDevice>& pDevice, const std::unique_ptr<VulkanLogicalDevice>& lDevice);
 
     void Cleanup();
 
-    bool CreateImageViews(const std::unique_ptr<CustomLD>& lDevice);
+    bool CreateImageViews(const std::unique_ptr<VulkanLogicalDevice>& lDevice);
 
     [[nodiscard]] const std::unique_ptr<vk::raii::SwapchainKHR>& GetSwapchain() const { return mSwapChain; }
     [[nodiscard]] const std::vector<vk::Image>& GetImages() const { return mSwapChainImages; }
@@ -26,8 +26,8 @@ public:
 
 
 private:
-    void CreateSwapInfo(vk::SwapchainCreateInfoKHR& info, const std::unique_ptr<CustomSurface>& surface);
-    void SetQueueFamilies(const std::unique_ptr<CustomPD>& pDevice, vk::SwapchainCreateInfoKHR& info);
+    void CreateSwapInfo(vk::SwapchainCreateInfoKHR& info, const std::unique_ptr<VulkanSurface>& surface);
+    void SetQueueFamilies(const std::unique_ptr<VulkanPhysicalDevice>& pDevice, vk::SwapchainCreateInfoKHR& info);
 
     std::unique_ptr<vk::raii::SwapchainKHR> mSwapChain;
 
@@ -39,8 +39,6 @@ private:
 
     uint32_t mSwapMinImageCount = 0;
     uint32_t mSwapImageCount = 0;
-
-    size_t mImageIndex = 0;
 
 };
 

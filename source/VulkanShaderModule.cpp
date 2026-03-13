@@ -1,9 +1,9 @@
-#include "CustomSM.h"
-#include "CustomLD.h"
+#include "VulkanShaderModule.h"
+#include "VulkanLogicalDevice.h"
 #include "FileUtility.h"
 
 
-bool CustomSM::CreateShaderModule(const CustomLD& lDevice, const char* fileName){
+bool VulkanShaderModule::CreateShaderModule(const VulkanLogicalDevice& lDevice, const char* fileName){
 
     mShaderCode = FileUtility::ParseFile(fileName);
 
@@ -23,11 +23,11 @@ bool CustomSM::CreateShaderModule(const CustomLD& lDevice, const char* fileName)
     return true;
 }
 
-void CustomSM::SetCreateInfo(vk::ShaderModuleCreateInfo& info) {
+void VulkanShaderModule::SetCreateInfo(vk::ShaderModuleCreateInfo& info) {
     info.setCodeSize(mShaderCode.size() * sizeof(char));
     info.setPCode(reinterpret_cast<const uint32_t*>(mShaderCode.data()));
 }
 
-void CustomSM::Cleanup(){
+void VulkanShaderModule::Cleanup(){
     mShaderModule.reset();
 }

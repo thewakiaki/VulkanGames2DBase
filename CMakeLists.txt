@@ -21,31 +21,31 @@ add_executable(VulkanGame
         source/GameApp.cpp
 		source/GameWindow.cpp
 		include/GameWindow.h
-		source/VkSetup.cpp
-		include/VkSetup.h
-		source/CustomPD.cpp
-		include/CustomPD.h
+        source/VulkanInstance.cpp
+        include/VulkanInstance.h
+		source/VulkanPhysicalDevice.cpp
+		include/VulkanPhysicalDevice.h
 		include/CustomVkStructs.h
-		include/CustomLD.h
-		source/CustomLD.cpp
-		include/CustomSurface.h
-		source/CustomSurface.cpp
-		include/CustomSC.h
-		source/CustomSC.cpp
-		include/CustomSM.h
-		source/CustomSM.cpp
+		include/VulkanLogicalDevice.h
+		source/VulkanLogicalDevice.cpp
+        include/VulkanSurface.h
+        source/VulkanSurface.cpp
+		include/VulkanSwapChain.h
+		source/VulkanSwapChain.cpp
+		include/VulkanShaderModule.h
+		source/VulkanShaderModule.cpp
 		include/FileUtility.h
 		source/FileUtility.cpp
 		include/GraphicsPipeline.h
 		source/GraphicsPipeline.cpp
-		include/CommandBuffer.h
-		source/CommandBuffer.cpp
-		include/Renderer.h
-		source/Renderer.cpp
-		source/RenderBuffer.cpp
-		include/RenderBuffer.h
-		source/VertexBuffer.cpp
-		include/VertexBuffer.h
+		include/VKCommandBuffer.h
+		source/VKCommandBuffer.cpp
+		include/VulkanRenderer.h
+		source/VulkanRenderer.cpp
+		source/VKRenderBuffer.cpp
+		include/VKRenderBuffer.h
+		source/VKVertexBuffer.cpp
+		include/VKVertexBuffer.h
 		source/IndexBuffer.cpp
 		include/IndexBuffer.h
 )

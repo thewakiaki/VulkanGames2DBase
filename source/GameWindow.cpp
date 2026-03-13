@@ -3,7 +3,7 @@
 //
 
 #include "../include/GameWindow.h"
-#include "Renderer.h"
+#include "VulkanRenderer.h"
 
 
 GameWindow::GameWindow()
@@ -48,11 +48,9 @@ vk::Extent2D GameWindow::GetFrameBufferSize() const{
 }
 
 void GameWindow::Cleanup() {
-    mRenderer = nullptr;
-    delete mRenderer;
 
     if(mGame_window) { glfwDestroyWindow(mGame_window); }
-    glfwTerminate();
+    mGame_window = nullptr;
 }
 
 void GameWindow::FrameBufferResizeCallback(GLFWwindow *window, int width, int height){

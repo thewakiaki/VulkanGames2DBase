@@ -1,8 +1,8 @@
-#include "../include/CustomSC.h"
+#include "../include/VulkanSwapChain.h"
 #include "CustomVkStructs.h"
 
 
-bool CustomSC::CreateSwapchain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice){
+bool VulkanSwapChain::CreateSwapchain(GLFWwindow* window,const std::unique_ptr<VulkanSurface>& surface,const std::unique_ptr<VulkanPhysicalDevice>& pDevice, const std::unique_ptr<VulkanLogicalDevice>& lDevice){
 
     mSwapChainSurfaceFormat = surface->GetChosenFormat();
     mSwapChainExtent = surface->GetChosenExtent();
@@ -36,7 +36,7 @@ bool CustomSC::CreateSwapchain(GLFWwindow* window,const std::unique_ptr<CustomSu
     }
 }
 
-void CustomSC::CreateSwapInfo(vk::SwapchainCreateInfoKHR& info, const std::unique_ptr<CustomSurface>& surface)
+void VulkanSwapChain::CreateSwapInfo(vk::SwapchainCreateInfoKHR& info, const std::unique_ptr<VulkanSurface>& surface)
 {
     info.setFlags(vk::SwapchainCreateFlagsKHR());
     info.setSurface(*surface->GetSurface());
@@ -54,7 +54,7 @@ void CustomSC::CreateSwapInfo(vk::SwapchainCreateInfoKHR& info, const std::uniqu
     info.setOldSwapchain(nullptr);
 }
 
-void CustomSC::SetQueueFamilies(const std::unique_ptr<CustomPD>& pDevice, vk::SwapchainCreateInfoKHR& info){
+void VulkanSwapChain::SetQueueFamilies(const std::unique_ptr<VulkanPhysicalDevice>& pDevice, vk::SwapchainCreateInfoKHR& info){
 
     uint32_t graphicsIndex = 0;
     uint32_t presentIndex = 0;
@@ -81,11 +81,9 @@ void CustomSC::SetQueueFamilies(const std::unique_ptr<CustomPD>& pDevice, vk::Sw
         std::cout << "Updated to Concurrent sharing mode\n";
     }
 
-    std::cout << "Concurrent mode not needed keeping exclusive mode\n";
-
 }
 
-bool CustomSC::CreateImageViews(const std::unique_ptr<CustomLD>& lDevice){
+bool VulkanSwapChain::CreateImageViews(const std::unique_ptr<VulkanLogicalDevice>& lDevice){
 
     mSwapChainImageViews.clear();
 
@@ -111,8 +109,8 @@ bool CustomSC::CreateImageViews(const std::unique_ptr<CustomLD>& lDevice){
     }
 }
 
-bool CustomSC::RecreateSwapChain(GLFWwindow* window,const std::unique_ptr<CustomSurface>& surface,
-                                 const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice){
+bool VulkanSwapChain::RecreateSwapChain(GLFWwindow* window,const std::unique_ptr<VulkanSurface>& surface,
+                                 const std::unique_ptr<VulkanPhysicalDevice>& pDevice, const std::unique_ptr<VulkanLogicalDevice>& lDevice){
     int width = 0, height = 0;
 
     glfwGetFramebufferSize(window, &width, &height);
@@ -133,7 +131,7 @@ bool CustomSC::RecreateSwapChain(GLFWwindow* window,const std::unique_ptr<Custom
     return true;
 }
 
-void CustomSC::Cleanup(){
+void VulkanSwapChain::Cleanup(){
     mSwapChainImageViews.clear();
-    mSwapChain = nullptr;
+    mSwapChain.reset();
 }

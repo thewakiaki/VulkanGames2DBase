@@ -1,26 +1,26 @@
 #ifndef GRAPHICS_PIPELINE_H
 #define GRAPHICS_PIPELINE_H
 
-#include "CustomSC.h"
-#include "CustomSM.h"
-#include "CustomLD.h"
+#include "VulkanSwapChain.h"
+#include "VulkanShaderModule.h"
+#include "VulkanLogicalDevice.h"
 
 
 
 class GraphicsPipeline{
 public:
-    explicit GraphicsPipeline(const CustomLD& lDevice) : mLogicalDevice(lDevice){}
+    explicit GraphicsPipeline(const VulkanLogicalDevice& lDevice) : mLogicalDevice(lDevice){}
 
     bool SetupShaders();
-    bool CreatePipeline(const std::unique_ptr<CustomSC>& swapchain);
+    bool CreatePipeline(const std::unique_ptr<VulkanSwapChain>& swapchain);
     void Cleanup();
 
    [[nodiscard]] const std::unique_ptr<vk::raii::Pipeline>& GetGraphicsPipeline() const { return mGraphicsPipeline; }
 
 
 private:
-    void SetPipelineVertShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, const std::unique_ptr<CustomSM>& shader);
-    void SetPipelineFragShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, const std::unique_ptr<CustomSM>& shader);
+    void SetPipelineVertShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, const std::unique_ptr<VulkanShaderModule>& shader);
+    void SetPipelineFragShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, const std::unique_ptr<VulkanShaderModule>& shader);
     void SetPipelineDynamicCreateInfo(vk::PipelineDynamicStateCreateInfo& info);
     void SetPipelineVertInputCreateInfo(vk::PipelineVertexInputStateCreateInfo& info);
     void SetPipelineInputAssemblyCreateInfo(vk::PipelineInputAssemblyStateCreateInfo& info);
@@ -28,7 +28,7 @@ private:
     void SetPipelineMultisampleCreateInfo(vk::PipelineMultisampleStateCreateInfo& info);
     void SetPipelineColorBlendCreateInfo(vk::PipelineColorBlendStateCreateInfo& info);
     void SetPipelineLayoutCreateInfo(vk::PipelineLayoutCreateInfo& info);
-    void SetPiplineRenderCreateInfo(vk::PipelineRenderingCreateInfo& info, const std::unique_ptr<CustomSC>& swapchain);
+    void SetPipelineRenderCreateInfo(vk::PipelineRenderingCreateInfo& info, const std::unique_ptr<VulkanSwapChain>& swapchain);
 
     void SetGraphicsPipelineCreateInfo(vk::GraphicsPipelineCreateInfo& info, vk::PipelineShaderStageCreateInfo shaderStages[],
                                        const vk::PipelineVertexInputStateCreateInfo& vertexInput, const vk::PipelineInputAssemblyStateCreateInfo& inputAssemblyInfo,
@@ -39,15 +39,15 @@ private:
     std::unique_ptr<vk::raii::Pipeline> mGraphicsPipeline;
     std::unique_ptr<vk::raii::PipelineLayout> mPipelineLayout;
 
-    const CustomLD& mLogicalDevice;
+    const VulkanLogicalDevice& mLogicalDevice;
 
-    std::unique_ptr<CustomSM> mVertShader;
-    std::unique_ptr<CustomSM> mFragShader;
+    std::unique_ptr<VulkanShaderModule> mVertShader;
+    std::unique_ptr<VulkanShaderModule> mFragShader;
 
     std::vector<vk::DynamicState> mDynamicStates;
 
-    vk::VertexInputBindingDescription mBinding;
-    std::array<vk::VertexInputAttributeDescription, 2> mAttributes;
+    vk::VertexInputBindingDescription mBinding = CustomVKStructs::Vertex::getBindingDescription();;
+    std::array<vk::VertexInputAttributeDescription, 2> mAttributes = CustomVKStructs::Vertex::getAttributeDescriptions();
 
 };
 

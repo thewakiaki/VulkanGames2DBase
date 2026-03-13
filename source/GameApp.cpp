@@ -1,14 +1,14 @@
 #include "../include/GameApp.h"
 #include <GLFW/glfw3.h>
 #include <GameWindow.h>
-#include <VkSetup.h>
-#include <CustomSurface.h>
-#include <CustomPD.h>
-#include <CustomLD.h>
-#include <CustomSC.h>
+#include <VulkanInstance.h>
+#include <VulkanSurface.h>
+#include <VulkanPhysicalDevice.h>
+#include <VulkanLogicalDevice.h>
+#include <VulkanSwapChain.h>
 #include <GraphicsPipeline.h>
-#include <CommandBuffer.h>
-#include <Renderer.h>
+#include <VKCommandBuffer.h>
+#include <VulkanRenderer.h>
 
 
 GameApp::GameApp() {}
@@ -17,9 +17,6 @@ GameApp::GameApp() {}
 bool GameApp::Run()
 {
     std::cout << "Game Starting Up\n";
-
-    //comment or uncomment for x11 to test with renderdoc
-    glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
 
     if(!glfwInit()){
         std::cerr << "Failed to init glfw\n";
@@ -49,9 +46,13 @@ bool GameApp::GameStart()
 
     if(!mLogicalDevice->CreateLogicalDevice(*mPhysicalDevice)) { return false; }
 
+    mGraphicsPipeline = std::make_unique<GraphicsPipeline>(*mLogicalDevice);
+
     if(!mSwapChain->CreateSwapchain(mGameWindow->GetWindow(), mCustomSurface, mPhysicalDevice, mLogicalDevice)) { return false; }
 
     if(!mSwapChain->CreateImageViews(mLogicalDevice)) { return false; }
+
+    mRenderer = std::make_unique<VulkanRenderer>(mSwapChain);
 
     if(!mGraphicsPipeline->SetupShaders()) { return false; }
 
@@ -67,9 +68,9 @@ bool GameApp::GameStart()
 
     mVertexBuffer->CopyStagingData(mCommandBuffer, mLogicalDevice);
 
-    if (!mIndexBuffer->SetupBuffers(mLogicalDevice, mPhysicalDevice, mIndices)) { return false; }
+    //if (!mIndexBuffer->SetupBuffers(mLogicalDevice, mPhysicalDevice, mIndices)) { return false; }
 
-    mIndexBuffer->CopyStagingData(mCommandBuffer, mLogicalDevice);
+    //mIndexBuffer->CopyStagingData(mCommandBuffer, mLogicalDevice);
 
     mGameWindow->SetRenderer(mRenderer.get());
 
@@ -84,8 +85,10 @@ bool GameApp::GamePlaying()
     {
         glfwPollEvents();
 
+
         mRenderer->DrawFrame(mLogicalDevice, mSwapChain, mCommandBuffer, mGraphicsPipeline, mGameWindow->GetWindow(), mCustomSurface, mPhysicalDevice, mVertexBuffer,
                              mIndexBuffer, mIndices);
+        std::cout << "playing\n";
 
         if (glfwGetKey(mGameWindow->GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
                   glfwSetWindowShouldClose(mGameWindow->GetWindow(), true);
@@ -97,9 +100,8 @@ bool GameApp::GamePlaying()
     return true;
 }
 
-void GameApp::GameEnd() const {
+void GameApp::GameEnd() {
     mLogicalDevice->GetLogicalDevice()->waitIdle();
-
     mRenderer->Cleanup();
     mIndexBuffer->Cleanup();
     mVertexBuffer->Cleanup();
@@ -112,27 +114,24 @@ void GameApp::GameEnd() const {
     mVkInstance->Cleanup();
     mGameWindow->Cleanup();
 
-
     std::cout << "Game Finished\n";
 }
 
 void GameApp::InitEngineComponents(){
     mGameWindow = std::make_unique<GameWindow>();
-    mVkInstance = std::make_unique<VkSetup>();
-    mCustomSurface = std::make_unique<CustomSurface>();
-    mPhysicalDevice = std::make_unique<CustomPD>();
-    mLogicalDevice = std::make_unique<CustomLD>();
-    mSwapChain = std::make_unique<CustomSC>();
-    mGraphicsPipeline = std::make_unique<GraphicsPipeline>(*mLogicalDevice);
-    mCommandBuffer = std::make_unique<CmdBuffer>();
-    mRenderer = std::make_unique<Renderer>(mSwapChain);
-    mVertexBuffer = std::make_unique<VertexBuffer>();
+    mVkInstance = std::make_unique<VulkanInstance>();
+    mCustomSurface = std::make_unique<VulkanSurface>();
+    mPhysicalDevice = std::make_unique<VulkanPhysicalDevice>();
+    mLogicalDevice = std::make_unique<VulkanLogicalDevice>();
+    mSwapChain = std::make_unique<VulkanSwapChain>();
+    mCommandBuffer = std::make_unique<VKCommandBuffer>();
+    mVertexBuffer = std::make_unique<VKVertexBuffer>();
     mIndexBuffer = std::make_unique<IndexBuffer>();
 
     //just test thing to draw
     mVertices = {
-        {{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f }},
-        {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{0.0f, -0.5f}, {0.0f, 0.0f, 1.0f}},
+        {{0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}},
         {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
     };
 

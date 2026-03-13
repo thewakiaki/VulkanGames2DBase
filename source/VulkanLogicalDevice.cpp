@@ -1,20 +1,18 @@
-#include "../include/CustomLD.h"
+#include "../include/VulkanLogicalDevice.h"
 #include "CustomVkStructs.h"
 #include "vulkan/vulkan.hpp"
 #include <vulkan/vulkan_core.h>
 
 
-CustomLD::~CustomLD(){
+VulkanLogicalDevice::~VulkanLogicalDevice()= default;
 
-}
-
-void CustomLD::Cleanup(){
+void VulkanLogicalDevice::Cleanup(){
     mLogicalDevice.reset();
     mGraphicsQueue.reset();
     mPresentQueue.reset();
 }
 
-bool CustomLD::CreateLogicalDevice(const CustomPD& device){
+bool VulkanLogicalDevice::CreateLogicalDevice(const VulkanPhysicalDevice& device){
 
     const uint32_t& graphicsFamily = device.GetFamilies()[static_cast<int>(CustomVKStructs::RequiredVkFamilies::Graphics)].familyIndex;
     const uint32_t& presentFamily =  device.GetFamilies()[static_cast<int>(CustomVKStructs::RequiredVkFamilies::Present)].familyIndex;

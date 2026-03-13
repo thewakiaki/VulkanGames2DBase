@@ -7,7 +7,7 @@
 
 
 #include "vulkan/vulkan.hpp"
-class Renderer;
+class VulkanRenderer;
 
 class GameWindow {
 public:
@@ -25,7 +25,7 @@ public:
 
     static void FrameBufferResizeCallback(GLFWwindow* window, int width, int height);
 
-    void SetRenderer(Renderer* renderer) { mRenderer = renderer; }
+    void SetRenderer(VulkanRenderer* renderer) { mRenderer = renderer; }
 
 
 private:
@@ -33,7 +33,7 @@ private:
 
     GLFWwindow* mGame_window;
 
-    Renderer* mRenderer = nullptr;
+    VulkanRenderer* mRenderer = nullptr;
 
     const char* mGame_Title = "Game Title";
 

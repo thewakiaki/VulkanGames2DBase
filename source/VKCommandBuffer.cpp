@@ -1,16 +1,16 @@
-#include "CommandBuffer.h"
+#include "VKCommandBuffer.h"
 #include "CustomVkStructs.h"
 #include "GraphicsPipeline.h"
 #include "IndexBuffer.h"
 
 
-void CmdBuffer::Cleanup(){
+void VKCommandBuffer::Cleanup(){
     mCommandBuffer.reset();
     mCommandBuffers.reset();
     mCommandPool.reset();
 }
 
-bool CmdBuffer::CreateCommandPool(const std::unique_ptr<CustomPD>& pDevice, const std::unique_ptr<CustomLD>& lDevice){
+bool VKCommandBuffer::CreateCommandPool(const std::unique_ptr<VulkanPhysicalDevice>& pDevice, const std::unique_ptr<VulkanLogicalDevice>& lDevice){
 
     vk::CommandPoolCreateInfo createInfo;
 
@@ -38,7 +38,7 @@ bool CmdBuffer::CreateCommandPool(const std::unique_ptr<CustomPD>& pDevice, cons
     }
 }
 
-bool CmdBuffer::CreateCommandBuffer(const std::unique_ptr<CustomLD>& lDevice){
+bool VKCommandBuffer::CreateCommandBuffer(const std::unique_ptr<VulkanLogicalDevice>& lDevice){
 
     vk::CommandBufferAllocateInfo allocInfo;
 
@@ -61,7 +61,7 @@ bool CmdBuffer::CreateCommandBuffer(const std::unique_ptr<CustomLD>& lDevice){
     }
 }
 
-bool CmdBuffer::CreateCommandBuffers(const std::unique_ptr<CustomLD>& lDevice){
+bool VKCommandBuffer::CreateCommandBuffers(const std::unique_ptr<VulkanLogicalDevice>& lDevice){
     vk::CommandBufferAllocateInfo allocInfo;
     allocInfo.setCommandPool(*mCommandPool);
     allocInfo.setLevel(vk::CommandBufferLevel::ePrimary);
@@ -80,11 +80,9 @@ bool CmdBuffer::CreateCommandBuffers(const std::unique_ptr<CustomLD>& lDevice){
 
 }
 
-void CmdBuffer::RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex,
-                                    const std::unique_ptr<GraphicsPipeline>& pipeline, uint32_t frameIndex, const std::unique_ptr<VertexBuffer>& vertexBuffer,
+void VKCommandBuffer::RecordCommandBuffer(const std::unique_ptr<VulkanSwapChain>& swapchain, uint32_t imageIndex,
+                                    const std::unique_ptr<GraphicsPipeline>& pipeline, uint32_t frameIndex, const std::unique_ptr<VKVertexBuffer>& vertexBuffer,
                                     const std::unique_ptr<IndexBuffer>& indexBuffer, const std::vector<uint16_t> &indices) {
-
-    GetCommandBuffers()[frameIndex].reset(vk::CommandBufferResetFlagBits::eReleaseResources);
 
     GetCommandBuffers()[frameIndex].begin({});
 
@@ -102,7 +100,7 @@ void CmdBuffer::RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, 
     //GetCommandBuffers()[frameIndex].bindIndexBuffer(*indexBuffer->GetBuffer(), 0, vk::IndexType::eUint16);
 
     //GetCommandBuffers()[frameIndex].drawIndexed(indices.size(), 1, 0, 0, 0);
-    GetCommandBuffers()[frameIndex].draw(3, 1, 1, 0);
+    GetCommandBuffers()[frameIndex].draw(3, 1, 0, 0);
 
     GetCommandBuffers()[frameIndex].endRendering();
 
@@ -112,7 +110,7 @@ void CmdBuffer::RecordCommandBuffer(const std::unique_ptr<CustomSC>& swapchain, 
     GetCommandBuffers()[frameIndex].end();
 }
 
-void CmdBuffer::TransitionImageLayout(uint32_t frameIndex, uint32_t imageIndex, const std::unique_ptr<CustomSC>& swapchain, vk::ImageLayout oldLayout, vk::ImageLayout newLayout,
+void VKCommandBuffer::TransitionImageLayout(uint32_t frameIndex, uint32_t imageIndex, const std::unique_ptr<VulkanSwapChain>& swapchain, vk::ImageLayout oldLayout, vk::ImageLayout newLayout,
                                       vk::AccessFlags2 srcAccessMask, vk::AccessFlags2 dstAccessMask, vk::PipelineStageFlags2 srcStageMask,
                                       vk::PipelineStageFlags2 dstStageMask) const {
 
@@ -143,9 +141,9 @@ void CmdBuffer::TransitionImageLayout(uint32_t frameIndex, uint32_t imageIndex, 
     GetCommandBuffers()[frameIndex].pipelineBarrier2(dependencyInfo);
 }
 
-void CmdBuffer::BeginRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t imageIndex, uint32_t frameIndex) const {
+void VKCommandBuffer::BeginRender(const std::unique_ptr<VulkanSwapChain>& swapchain, uint32_t imageIndex, uint32_t frameIndex) const {
 
-    vk::ClearColorValue clearColor = vk::ClearColorValue(0.045f, 0.045f, 0.045f, 1.0f);
+    vk::ClearColorValue clearColor = vk::ClearColorValue(0.0f, 0.0f, 0.0f, 1.0f);
 
     vk::RenderingAttachmentInfo  attachmentInfo;
     attachmentInfo.setImageView(*swapchain->GetImageViews()[imageIndex]);
@@ -163,23 +161,27 @@ void CmdBuffer::BeginRender(const std::unique_ptr<CustomSC>& swapchain, uint32_t
     GetCommandBuffers()[frameIndex].beginRendering(renderingInfo);
 }
 
-void CmdBuffer::BindToGraphicsPipeline(uint32_t frameIndex, const std::unique_ptr<GraphicsPipeline>& pipeline) const {
+void VKCommandBuffer::BindToGraphicsPipeline(uint32_t frameIndex, const std::unique_ptr<GraphicsPipeline>& pipeline) const {
 
     GetCommandBuffers()[frameIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, *pipeline->GetGraphicsPipeline());
 }
 
-void CmdBuffer::SetViewportScissor(const std::unique_ptr<CustomSC>& swapchain, uint32_t frameIndex) const {
+void VKCommandBuffer::SetViewportScissor(const std::unique_ptr<VulkanSwapChain>& swapchain, uint32_t frameIndex) const {
 
     vk::Extent2D swapExtent = swapchain->GetExtent();
 
-    vk::Viewport viewport = vk::Viewport(0.0f, 0.0f, static_cast<float>(swapExtent.width), static_cast<float>(swapExtent.height), 0.0f, 1.0f);
+    vk::Viewport viewport = vk::Viewport(0.0f,
+                                         0.0f,
+                                         static_cast<float>(swapExtent.width),
+                                         static_cast<float>(swapExtent.height),
+                                         0.0f, 1.0f);
 
     GetCommandBuffers()[frameIndex].setViewport(0, {viewport});
     GetCommandBuffers()[frameIndex].setScissor(0, vk::Rect2D{vk::Offset2D(0, 0), swapExtent});
 }
 
-void CmdBuffer::CopyRenderBuffer(const std::unique_ptr<vk::raii::Buffer> &srcBuffer,
-    const std::unique_ptr<vk::raii::Buffer> &dstBuffer, vk::DeviceSize size, const std::unique_ptr<CustomLD>& lDevice) {
+void VKCommandBuffer::CopyRenderBuffer(const std::unique_ptr<vk::raii::Buffer> &srcBuffer,
+    const std::unique_ptr<vk::raii::Buffer> &dstBuffer, vk::DeviceSize size, const std::unique_ptr<VulkanLogicalDevice>& lDevice) {
 
     vk::CommandBufferAllocateInfo commandBufferAllocateInfo;
     commandBufferAllocateInfo.setCommandPool(*mCommandPool);

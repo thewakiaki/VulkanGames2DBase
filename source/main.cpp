@@ -4,9 +4,12 @@ int main()
 {
     try {
 
-        GameApp game_app;
+        GameApp gameApp;
 
-        game_app.Run();
+        gameApp.Run();
+        gameApp.Cleanup();
+        glfwTerminate();
+
         std::cout << "Finished\n";
     }
     catch (const std::exception& e) {

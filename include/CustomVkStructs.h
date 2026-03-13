@@ -38,8 +38,8 @@ namespace CustomVKStructs {
     constexpr size_t MAX_FRAMES_IN_FLIGHT = 2;
 
     struct Vertex {
-        glm::vec2 position;
-        glm::vec3 color;
+        glm::vec2 position = {};
+        glm::vec3 color = {};
 
         static vk::VertexInputBindingDescription getBindingDescription() {
             return { 0, sizeof(Vertex), vk::VertexInputRate::eVertex };

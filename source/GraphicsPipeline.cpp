@@ -4,10 +4,10 @@
 
 bool GraphicsPipeline::SetupShaders(){
 
-    mVertShader = std::make_unique<CustomSM>();
-    mFragShader = std::make_unique<CustomSM>();
+    mVertShader = std::make_unique<VulkanShaderModule>();
+    mFragShader = std::make_unique<VulkanShaderModule>();
 
-    if(!mVertShader->CreateShaderModule(mLogicalDevice, "../assets/shaders/slang.spv"))
+    if(!mVertShader->CreateShaderModule(mLogicalDevice, "../assets/shaders/vert.spv"))
     {
         std::cerr << "Failed to create vertex shader module\n";
         return false;
@@ -15,7 +15,7 @@ bool GraphicsPipeline::SetupShaders(){
 
     std::cout << "Succesfully created vertex shader module\n";
 
-    if(!mFragShader->CreateShaderModule(mLogicalDevice, "../assets/shaders/slang.spv"))
+    if(!mFragShader->CreateShaderModule(mLogicalDevice, "../assets/shaders/frag.spv"))
     {
         std::cerr << "Failed to create fragment shader module\n";
         return false;
@@ -26,7 +26,7 @@ bool GraphicsPipeline::SetupShaders(){
     return true;
 }
 
-bool GraphicsPipeline::CreatePipeline(const std::unique_ptr<CustomSC>& swapchain){
+bool GraphicsPipeline::CreatePipeline(const std::unique_ptr<VulkanSwapChain>& swapchain){
 
 
     vk::PipelineShaderStageCreateInfo vertCreateInfo;
@@ -56,16 +56,20 @@ bool GraphicsPipeline::CreatePipeline(const std::unique_ptr<CustomSC>& swapchain
     SetPipelineDynamicCreateInfo(dynamicInfo);
     SetPipelineRasterCreateInfo(rasterCreateInfo);
     SetPipelineColorBlendCreateInfo(colorBlendInfo);
-    SetPiplineRenderCreateInfo(renderInfo, swapchain);
+    SetPipelineRenderCreateInfo(renderInfo, swapchain);
     SetPipelineInputAssemblyCreateInfo(inputAssemblyInfo);
+    SetPipelineMultisampleCreateInfo(multisampleInfo);
+
     SetPipelineLayoutCreateInfo(layoutCreatInfo);
+    mPipelineLayout = std::make_unique<vk::raii::PipelineLayout>(*mLogicalDevice.GetLogicalDevice(), layoutCreatInfo);
+
     SetPipelineVertInputCreateInfo(vertInputInfo);
     SetGraphicsPipelineCreateInfo(pipelineInfo, shaderStages, vertInputInfo, inputAssemblyInfo, viewportStateInfo, rasterCreateInfo, multisampleInfo, colorBlendInfo, dynamicInfo, renderInfo);
 
     try {
-        mGraphicsPipeline = std::make_unique<vk::raii::Pipeline>(mLogicalDevice.GetLogicalDevice()->createGraphicsPipeline(nullptr, pipelineInfo, nullptr));
+        vk::raii::Pipeline pipeline = mLogicalDevice.GetLogicalDevice()->createGraphicsPipeline(nullptr, pipelineInfo, nullptr);
+        mGraphicsPipeline = std::make_unique<vk::raii::Pipeline>(std::move(pipeline));
         std::cout << "Created Graphics Pipeline\n";
-
 
         return true;
 
@@ -76,20 +80,20 @@ bool GraphicsPipeline::CreatePipeline(const std::unique_ptr<CustomSC>& swapchain
     }
 }
 
-void GraphicsPipeline::SetPipelineVertShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, const std::unique_ptr<CustomSM>& shader){
+void GraphicsPipeline::SetPipelineVertShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, const std::unique_ptr<VulkanShaderModule>& shader){
 
     info.setStage(vk::ShaderStageFlagBits::eVertex);
     info.setModule(*shader->GetShaderModule());
-    info.setPName("vertMain");
+    info.setPName("main");
     info.setPSpecializationInfo(nullptr);
     info.setFlags({});
 }
 
-void GraphicsPipeline::SetPipelineFragShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, const std::unique_ptr<CustomSM>& shader){
+void GraphicsPipeline::SetPipelineFragShaderCreateInfo(vk::PipelineShaderStageCreateInfo& info, const std::unique_ptr<VulkanShaderModule>& shader){
 
     info.setStage(vk::ShaderStageFlagBits::eFragment);
     info.setModule(*shader->GetShaderModule());
-    info.setPName("fragMain");
+    info.setPName("main");
     info.setPSpecializationInfo(nullptr);
     info.setFlags({});
 }
@@ -103,9 +107,6 @@ void GraphicsPipeline::SetPipelineDynamicCreateInfo(vk::PipelineDynamicStateCrea
 }
 
 void GraphicsPipeline::SetPipelineVertInputCreateInfo(vk::PipelineVertexInputStateCreateInfo& info){
-
-    mBinding = CustomVKStructs::Vertex::getBindingDescription();
-    mAttributes = CustomVKStructs::Vertex::getAttributeDescriptions();
 
     info.setVertexBindingDescriptionCount(1);
     info.setPVertexBindingDescriptions(&mBinding);
@@ -140,7 +141,7 @@ void GraphicsPipeline::SetPipelineColorBlendCreateInfo(vk::PipelineColorBlendSta
 
     vk::PipelineColorBlendAttachmentState attachment{};
 
-    attachment.setBlendEnable(vk::False);
+    attachment.setBlendEnable(false);
     attachment.setSrcColorBlendFactor(vk::BlendFactor::eSrcAlpha);
     attachment.setDstColorBlendFactor(vk::BlendFactor::eOneMinusSrcAlpha);
     attachment.setColorBlendOp(vk::BlendOp::eAdd);
@@ -151,18 +152,18 @@ void GraphicsPipeline::SetPipelineColorBlendCreateInfo(vk::PipelineColorBlendSta
 
     info.setLogicOpEnable(false);
 
-    vk::PipelineColorBlendAttachmentState attachments[] = {attachment};
-    info.setAttachments(attachments);
+    const vk::PipelineColorBlendAttachmentState attachments[] = {attachment};
+    info.setAttachmentCount(1);
+    info.setPAttachments(attachments);
 }
 
 void GraphicsPipeline::SetPipelineLayoutCreateInfo(vk::PipelineLayoutCreateInfo& info){
 
     info.setSetLayoutCount(0);
     info.setPushConstantRangeCount(0);
-    mPipelineLayout = std::make_unique<vk::raii::PipelineLayout>(*mLogicalDevice.GetLogicalDevice(), info);
 }
 
-void GraphicsPipeline::SetPiplineRenderCreateInfo(vk::PipelineRenderingCreateInfo& info, const std::unique_ptr<CustomSC>& swapchain){
+void GraphicsPipeline::SetPipelineRenderCreateInfo(vk::PipelineRenderingCreateInfo& info, const std::unique_ptr<VulkanSwapChain>& swapchain){
 
     info.setColorAttachmentCount(1);
     info.setPColorAttachmentFormats(&swapchain->GetFormat().format);

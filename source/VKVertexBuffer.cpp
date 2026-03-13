@@ -2,16 +2,18 @@
 // Created by wakiaki on 3/11/26.
 //
 
-#include "../include/VertexBuffer.h"
+#include "../include/VKVertexBuffer.h"
 
-#include "CommandBuffer.h"
+#include "VKCommandBuffer.h"
 
-bool VertexBuffer::SetupBuffers(const std::unique_ptr<CustomLD> &lDevice, const std::unique_ptr<CustomPD> &pDevice, std::vector<CustomVKStructs::Vertex>& vertices) {
+bool VKVertexBuffer::SetupBuffers(const std::unique_ptr<VulkanLogicalDevice> &lDevice, const std::unique_ptr<VulkanPhysicalDevice> &pDevice, std::vector<CustomVKStructs::Vertex>& vertices) {
     std::cout << "sizeof(Vertex): " << sizeof(CustomVKStructs::Vertex) << std::endl;      // 32?
     std::cout << "mVertices.size(): " << vertices.size() << std::endl;  // 3?
     std::cout << "Copy size: " << (vertices.size() * sizeof(CustomVKStructs::Vertex)) << std::endl;
 
-    if (!RenderBuffer::SetupBuffers(lDevice, pDevice, vertices)) { return false; }
+    mVertexCount = vertices.size();
+
+    if (!VKRenderBuffer::SetupBuffers(lDevice, pDevice, vertices)) { return false; }
 
     BindStagingMemory(vertices);
 
@@ -24,11 +26,12 @@ bool VertexBuffer::SetupBuffers(const std::unique_ptr<CustomLD> &lDevice, const 
     return true;
 }
 
-bool VertexBuffer::CopyStagingData(const std::unique_ptr<CmdBuffer> &cmdBuffer, const std::unique_ptr<CustomLD>& lDevice) {
+bool VKVertexBuffer::CopyStagingData(const std::unique_ptr<VKCommandBuffer> &cmdBuffer, const std::unique_ptr<VulkanLogicalDevice>& lDevice) {
 
     try {
+        std::cout << "Copy Staging Data: " << mStageCreateInfoSize << "\n";
         cmdBuffer->CopyRenderBuffer(mStagingBuffer, mVertexBuffer, mStageCreateInfoSize, lDevice);
-        std::cout << "Successfully Copied Staging Buffer to VertexBuffer\n";
+        std::cout << "Successfully Copied Staging Buffer to VKVertexBuffer\n";
         return true;
     }
     catch (const vk::SystemError& err) {
@@ -38,14 +41,14 @@ bool VertexBuffer::CopyStagingData(const std::unique_ptr<CmdBuffer> &cmdBuffer, 
 
 }
 
-void VertexBuffer::Cleanup() {
-    RenderBuffer::Cleanup();
+void VKVertexBuffer::Cleanup() {
+    VKRenderBuffer::Cleanup();
 
     mVertexBuffer.reset();
     mVertexMemory.reset();
 }
 
-bool VertexBuffer::SetupBuffer(const std::unique_ptr<CustomLD> &lDevice, CustomVKStructs::BufferType bufferType) {
+bool VKVertexBuffer::SetupBuffer(const std::unique_ptr<VulkanLogicalDevice> &lDevice, CustomVKStructs::BufferType bufferType) {
     vk::BufferCreateInfo bufferCreateInfo = SetBufferCreateInfo();
 
     try {
@@ -60,7 +63,7 @@ bool VertexBuffer::SetupBuffer(const std::unique_ptr<CustomLD> &lDevice, CustomV
 
 }
 
-bool VertexBuffer::SetupMemory(const std::unique_ptr<CustomPD> &pDevice, const std::unique_ptr<CustomLD> &lDevice) {
+bool VKVertexBuffer::SetupMemory(const std::unique_ptr<VulkanPhysicalDevice> &pDevice, const std::unique_ptr<VulkanLogicalDevice> &lDevice) {
 
     mVertexMemoryRequirements = mVertexBuffer->getMemoryRequirements();
 
@@ -83,7 +86,7 @@ bool VertexBuffer::SetupMemory(const std::unique_ptr<CustomPD> &pDevice, const s
     }
 }
 
-vk::BufferCreateInfo VertexBuffer::SetBufferCreateInfo() {
+vk::BufferCreateInfo VKVertexBuffer::SetBufferCreateInfo() {
     vk::BufferCreateInfo bufferCreateInfo;
     bufferCreateInfo.setSize(mVertexBufferSize);
     bufferCreateInfo.setUsage(vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eTransferDst);
@@ -92,7 +95,7 @@ vk::BufferCreateInfo VertexBuffer::SetBufferCreateInfo() {
     return bufferCreateInfo;
 }
 
-vk::MemoryAllocateInfo VertexBuffer::SetMemoryAllocateInfo() const {
+vk::MemoryAllocateInfo VKVertexBuffer::SetMemoryAllocateInfo() const {
     vk::MemoryAllocateInfo memoryAllocateInfo;
     memoryAllocateInfo.setAllocationSize(mVertexMemoryRequirements.size);
     memoryAllocateInfo.setMemoryTypeIndex(mVertexMemoryTypeIndex);

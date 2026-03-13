@@ -1,19 +1,14 @@
 //
 // Created by wakiaki on 1/14/26.
 //
-#include "../include/CustomPD.h"
+#include "../include/VulkanPhysicalDevice.h"
 #include "CustomVkStructs.h"
 
-void CustomPD::Cleanup(){
+void VulkanPhysicalDevice::Cleanup() {
     mPhysicalDevice.reset();
-
-    for(CustomVKStructs::PhysicalDeviceScore& device : mDeviceScores)
-    {
-        device.Cleanup();
-    }
 }
 
-bool CustomPD::SetUpPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance, const std::unique_ptr<CustomSurface>& surface){
+bool VulkanPhysicalDevice::SetUpPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance, const std::unique_ptr<VulkanSurface>& surface){
 
     if(!SelectPhysicalDevice(vk_instance)) { return false; }
     if(!FindQueueFamilies(surface)) { return false; };
@@ -22,7 +17,7 @@ bool CustomPD::SetUpPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk
     return true;
 }
 
-bool CustomPD::SelectPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance) {
+bool VulkanPhysicalDevice::SelectPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance) {
 
     std::vector<vk::raii::PhysicalDevice> devices = vk_instance->enumeratePhysicalDevices();
 
@@ -52,7 +47,7 @@ bool CustomPD::SelectPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& v
     return true;
 }
 
-void CustomPD::ScoreDevice(vk::raii::PhysicalDevice device) {
+void VulkanPhysicalDevice::ScoreDevice(vk::raii::PhysicalDevice device) {
 
     int score = 0;
 
@@ -67,10 +62,10 @@ void CustomPD::ScoreDevice(vk::raii::PhysicalDevice device) {
 
     std::cout << "Device : " << device.getProperties().deviceName << " Scored: " << score << "\n";
 
-    mDeviceScores.emplace_back(CustomVKStructs::PhysicalDeviceScore(score, std::make_unique<vk::raii::PhysicalDevice>(device)));
+    mDeviceScores.emplace_back(score, std::make_unique<vk::raii::PhysicalDevice>(device));
 }
 
-void CustomPD::GetMostSuitableDevice() {
+void VulkanPhysicalDevice::GetMostSuitableDevice() {
 
      uint32_t bestDevice = 0;
 
@@ -93,16 +88,18 @@ void CustomPD::GetMostSuitableDevice() {
     }
 
     mPhysicalDevice = std::move(mDeviceScores[bestDevice].physical_device);
+
+    mDeviceScores.clear();
 }
 
-bool CustomPD::DeviceTypeSuitable(const vk::raii::PhysicalDevice& device) {
+bool VulkanPhysicalDevice::DeviceTypeSuitable(const vk::raii::PhysicalDevice& device) {
 
     vk::PhysicalDeviceProperties deviceProperties = device.getProperties();
 
     return deviceProperties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu || deviceProperties.deviceType == vk::PhysicalDeviceType::eIntegratedGpu;
 }
 
-bool CustomPD::FindQueueFamilies(const std::unique_ptr<CustomSurface>& surface){
+bool VulkanPhysicalDevice::FindQueueFamilies(const std::unique_ptr<VulkanSurface>& surface){
 
     if(!mPhysicalDevice)
     {
@@ -154,7 +151,7 @@ bool CustomPD::FindQueueFamilies(const std::unique_ptr<CustomSurface>& surface){
     return true;
 }
 
-bool CustomPD::SetupVulkanDeviceFeatures(){
+bool VulkanPhysicalDevice::SetupVulkanDeviceFeatures(){
 
     mVulkan13Features.dynamicRendering = vk::True;
     mDynamicStateFeatures.extendedDynamicState = vk::True;
@@ -179,7 +176,7 @@ bool CustomPD::SetupVulkanDeviceFeatures(){
     return true;
 }
 
-void CustomPD::UpdateSurfaceDetails(const std::unique_ptr<CustomSurface>& surface) {
+void VulkanPhysicalDevice::UpdateSurfaceDetails(const std::unique_ptr<VulkanSurface>& surface) {
 
     surface->SetCapabilities(mPhysicalDevice);
     surface->SetFormats(mPhysicalDevice);

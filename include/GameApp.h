@@ -4,16 +4,16 @@
 
 
 #include "GameWindow.h"
-#include "VkSetup.h"
-#include "CustomSurface.h"
-#include "CustomPD.h"
-#include "CustomLD.h"
-#include "CustomSC.h"
+#include "VulkanInstance.h"
+#include "VulkanSurface.h"
+#include "VulkanPhysicalDevice.h"
+#include "VulkanLogicalDevice.h"
+#include "VulkanSwapChain.h"
 #include "GraphicsPipeline.h"
-#include "CommandBuffer.h"
-#include "Renderer.h"
+#include "VKCommandBuffer.h"
+#include "VulkanRenderer.h"
 #include "IndexBuffer.h"
-#include "VertexBuffer.h"
+#include "VKVertexBuffer.h"
 
 class GameApp
 {
@@ -30,7 +30,7 @@ private:
     bool GameStart();
     bool GamePlaying();
 
-    void GameEnd() const;
+    void GameEnd();
     void InitEngineComponents();
 
     bool mApp_running = false;
@@ -40,16 +40,16 @@ private:
     std::vector<CustomVKStructs::Vertex> mVertices;
     std::vector<uint16_t> mIndices;
 
-    std::unique_ptr<VkSetup> mVkInstance;
-    std::unique_ptr<CustomPD> mPhysicalDevice;
-    std::unique_ptr<CustomLD> mLogicalDevice;
+    std::unique_ptr<VulkanInstance> mVkInstance;
+    std::unique_ptr<VulkanPhysicalDevice> mPhysicalDevice;
+    std::unique_ptr<VulkanLogicalDevice> mLogicalDevice;
     std::unique_ptr<GameWindow> mGameWindow;
-    std::unique_ptr<CustomSurface> mCustomSurface;
-    std::unique_ptr<CustomSC> mSwapChain;
+    std::unique_ptr<VulkanSurface> mCustomSurface;
+    std::unique_ptr<VulkanSwapChain> mSwapChain;
     std::unique_ptr<GraphicsPipeline> mGraphicsPipeline;
-    std::unique_ptr<CmdBuffer> mCommandBuffer;
-    std::unique_ptr<Renderer> mRenderer;
-    std::unique_ptr<VertexBuffer> mVertexBuffer;
+    std::unique_ptr<VKCommandBuffer> mCommandBuffer;
+    std::unique_ptr<VulkanRenderer> mRenderer;
+    std::unique_ptr<VKVertexBuffer> mVertexBuffer;
     std::unique_ptr<IndexBuffer> mIndexBuffer;
 
 };

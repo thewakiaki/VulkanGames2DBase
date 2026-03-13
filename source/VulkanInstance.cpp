@@ -2,24 +2,25 @@
 // Created by wakiaki on 1/13/26.
 //
 
-#include "../include/VkSetup.h"
+#include "../include/VulkanInstance.h"
 
 
-bool VkSetup::InitVulkan()
+bool VulkanInstance::InitVulkan()
 {
     if (!CreateInstance()) { return false; }
 
     return true;
 }
 
-bool VkSetup::CreateInstance()
+bool VulkanInstance::CreateInstance()
 {
     try {
-
+        vk::raii::Context context;
         constexpr vk::ApplicationInfo gameInfo("Game Name", VK_MAKE_VERSION(1, 0, 0), "Game Engine", VK_MAKE_VERSION(1, 0, 0), VK_API_VERSION_1_3);
 
         uint32_t glfwExtensionCount = 0;
-        auto glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+        const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
         mInstanceExtensions = std::vector<const char*>(glfwExtensions, glfwExtensions + glfwExtensionCount);
 
     //#ifdef __APPLE__
@@ -29,28 +30,34 @@ bool VkSetup::CreateInstance()
     //    glfwExtensions = allExtensions.data();
     //#endif
 
-        auto availableExtensions = mContext.enumerateInstanceExtensionProperties();
+        auto availableExtensions = context.enumerateInstanceExtensionProperties();
         std::cout << "Available Instance Extensions: " << availableExtensions.size() << "\n";
 
         mInstanceExtensions.emplace_back("VK_KHR_get_physical_device_properties2");
+        mInstanceExtensions.emplace_back("VK_EXT_debug_utils");
+
+        std::array<const char*, 1> validationLayers = { "VK_LAYER_KHRONOS_validation" };
 
         //for (const auto& ext : availableExtensions) {
-        //    std::cout << "  " << ext.extensionName << " v" << ext.specVersion << "\n";
+        //   std::cout << "  " << ext.extensionName << " v" << ext.specVersion << "\n";
         //}
 
-        for(auto ext : mInstanceExtensions)
+        for(const char* ext : mInstanceExtensions)
         {
             std::cout << "Extension : " << ext << " added\n";
         }
 
-        const char** extensionsToCheck = mInstanceExtensions.data();
+        if (!CheckExtensions(context, mInstanceExtensions.size(), mInstanceExtensions.data())) { return false; }
 
-        if (!CheckExtensions(mContext, mInstanceExtensions.size(), extensionsToCheck)) { return false; }
+        vk::InstanceCreateInfo createInfo;
+        createInfo.setFlags({});
+        createInfo.setPApplicationInfo(&gameInfo);
+        createInfo.setEnabledLayerCount(1);
+        createInfo.setPpEnabledLayerNames(validationLayers.data());
+        createInfo.setEnabledExtensionCount(static_cast<uint32_t>(mInstanceExtensions.size()));
+        createInfo.setPpEnabledExtensionNames(mInstanceExtensions.data());
 
-        vk::InstanceCreateInfo create_info({}, &gameInfo, 0, nullptr, static_cast<uint32_t>(mInstanceExtensions.size()), mInstanceExtensions.data());
-
-
-        mVulkanInstance = std::make_unique<vk::raii::Instance>(mContext, create_info);
+        mVulkanInstance = std::make_unique<vk::raii::Instance>(context, createInfo);
         if(!mVulkanInstance) {
             std::cerr << "Failed to create VK_INSTANCE\n";
             return false;
@@ -71,7 +78,7 @@ bool VkSetup::CreateInstance()
 
 }
 
-bool VkSetup::CheckExtensions(const vk::raii::Context& vContext, const uint32_t& extensionCount, const char** extensions) {
+bool VulkanInstance::CheckExtensions(const vk::raii::Context& vContext, const uint32_t& extensionCount, const char** extensions) {
 
     auto extensionProperties = vContext.enumerateInstanceExtensionProperties();
     bool extensionFound = false;
@@ -97,6 +104,6 @@ bool VkSetup::CheckExtensions(const vk::raii::Context& vContext, const uint32_t&
     return true;
 }
 
-void VkSetup::Cleanup(){
+void VulkanInstance::Cleanup(){
     mVulkanInstance.reset();
 }

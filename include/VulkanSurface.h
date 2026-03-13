@@ -2,7 +2,7 @@
 #define CUSTOM_SURFACE_H
 
 
-class CustomSurface{
+class VulkanSurface{
     public :
         bool CreateSurface(const std::unique_ptr<vk::raii::Instance>& vkInstance, GLFWwindow* window);
         void Cleanup();

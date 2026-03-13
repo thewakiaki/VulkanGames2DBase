@@ -5,17 +5,17 @@
 #ifndef VULKANGAMES2DBASE_PHYISICALDEVICE_H
 #define VULKANGAMES2DBASE_PHYISICALDEVICE_H
 
-#include "CustomSurface.h"
+#include "VulkanSurface.h"
 #include "CustomVkStructs.h"
 
-class CustomPD {
+class VulkanPhysicalDevice {
 public:
-    CustomPD() = default;
-    ~CustomPD() = default;
+    VulkanPhysicalDevice() = default;
+    ~VulkanPhysicalDevice() = default;
 
     void Cleanup();
 
-    bool SetUpPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance, const std::unique_ptr<CustomSurface>& surface);
+    bool SetUpPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance, const std::unique_ptr<VulkanSurface>& surface);
 
     [[nodiscard]] const std::unique_ptr<vk::raii::PhysicalDevice>& GetPhysicalDevice() const { return mPhysicalDevice; }
 
@@ -26,12 +26,12 @@ public:
 private:
     void ScoreDevice(vk::raii::PhysicalDevice device);
     void GetMostSuitableDevice();
-    void UpdateSurfaceDetails(const std::unique_ptr<CustomSurface>& surface);
+    void UpdateSurfaceDetails(const std::unique_ptr<VulkanSurface>& surface);
 
     bool SelectPhysicalDevice(const std::unique_ptr<vk::raii::Instance>& vk_instance);
     bool DeviceTypeSuitable(const vk::raii::PhysicalDevice& device);
     //bool DeviceFeaturesSuitable(const std::unique_ptr<vk::raii::PhysicalDevice>& device);
-    bool FindQueueFamilies(const std::unique_ptr<CustomSurface>& surface);
+    bool FindQueueFamilies(const std::unique_ptr<VulkanSurface>& surface);
     bool SetupVulkanDeviceFeatures();
 
 

@@ -4,24 +4,24 @@
 
 #ifndef VULKANGAMES2DBASE_INDEXBUFFER_H
 #define VULKANGAMES2DBASE_INDEXBUFFER_H
-#include "RenderBuffer.h"
+#include "VKRenderBuffer.h"
 
-class CmdBuffer;
+class VKCommandBuffer;
 
-class IndexBuffer : public RenderBuffer {
+class IndexBuffer : public VKRenderBuffer {
 
 public:
 
-    bool SetupBuffers(const std::unique_ptr<CustomLD> &lDevice, const std::unique_ptr<CustomPD> &pDevice, std::vector<uint16_t>& indices) override;
-    bool CopyStagingData(const std::unique_ptr<CmdBuffer>& cmdBuffer, const std::unique_ptr<CustomLD>& lDevice) override;
+    bool SetupBuffers(const std::unique_ptr<VulkanLogicalDevice> &lDevice, const std::unique_ptr<VulkanPhysicalDevice> &pDevice, std::vector<uint16_t>& indices) override;
+    bool CopyStagingData(const std::unique_ptr<VKCommandBuffer>& cmdBuffer, const std::unique_ptr<VulkanLogicalDevice>& lDevice) override;
 
     [[nodiscard]] const std::unique_ptr<vk::raii::Buffer>& GetBuffer() const override { return mIndexBuffer; }
 
     void Cleanup() override;
 
 protected:
-    bool SetupBuffer(const std::unique_ptr<CustomLD> &lDevice, CustomVKStructs::BufferType bufferType) override;
-    bool SetupMemory(const std::unique_ptr<CustomPD> &pDevice, const std::unique_ptr<CustomLD> &lDevice) override;
+    bool SetupBuffer(const std::unique_ptr<VulkanLogicalDevice> &lDevice, CustomVKStructs::BufferType bufferType) override;
+    bool SetupMemory(const std::unique_ptr<VulkanPhysicalDevice> &pDevice, const std::unique_ptr<VulkanLogicalDevice> &lDevice) override;
 
     vk::BufferCreateInfo SetBufferCreateInfo() override;
     [[nodiscard]] vk::MemoryAllocateInfo SetMemoryAllocateInfo() const override;

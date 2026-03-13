@@ -4,14 +4,14 @@
 
 #include "../include/IndexBuffer.h"
 
-#include "CommandBuffer.h"
+#include "VKCommandBuffer.h"
 
 
 
-bool IndexBuffer::SetupBuffers(const std::unique_ptr<CustomLD> &lDevice, const std::unique_ptr<CustomPD> &pDevice,
-    std::vector<uint16_t> &indices) {
+bool IndexBuffer::SetupBuffers(const std::unique_ptr<VulkanLogicalDevice> &lDevice, const std::unique_ptr<VulkanPhysicalDevice> &pDevice,
+                               std::vector<uint16_t> &indices) {
 
-    if (!RenderBuffer::SetupBuffers(lDevice, pDevice, indices)) { return false; }
+    if (!VKRenderBuffer::SetupBuffers(lDevice, pDevice, indices)) { return false; }
 
     BindStagingMemory(indices);
 
@@ -24,8 +24,8 @@ bool IndexBuffer::SetupBuffers(const std::unique_ptr<CustomLD> &lDevice, const s
     return true;
 }
 
-bool IndexBuffer::CopyStagingData(const std::unique_ptr<CmdBuffer> &cmdBuffer,
-    const std::unique_ptr<CustomLD> &lDevice) {
+bool IndexBuffer::CopyStagingData(const std::unique_ptr<VKCommandBuffer> &cmdBuffer,
+    const std::unique_ptr<VulkanLogicalDevice> &lDevice) {
 
     try {
         cmdBuffer->CopyRenderBuffer(mStagingBuffer, mIndexBuffer, mStageCreateInfoSize, lDevice);
@@ -42,13 +42,13 @@ bool IndexBuffer::CopyStagingData(const std::unique_ptr<CmdBuffer> &cmdBuffer,
 }
 
 void IndexBuffer::Cleanup() {
-    RenderBuffer::Cleanup();
+    VKRenderBuffer::Cleanup();
 
     mIndexBuffer.reset();
     mIndexMemory.reset();
 }
 
-bool IndexBuffer::SetupBuffer(const std::unique_ptr<CustomLD> &lDevice, CustomVKStructs::BufferType) {
+bool IndexBuffer::SetupBuffer(const std::unique_ptr<VulkanLogicalDevice> &lDevice, CustomVKStructs::BufferType) {
     vk::BufferCreateInfo bufferCreateInfo = SetBufferCreateInfo();
 
     try {
@@ -62,7 +62,7 @@ bool IndexBuffer::SetupBuffer(const std::unique_ptr<CustomLD> &lDevice, CustomVK
     }
 }
 
-bool IndexBuffer::SetupMemory(const std::unique_ptr<CustomPD> &pDevice, const std::unique_ptr<CustomLD> &lDevice) {
+bool IndexBuffer::SetupMemory(const std::unique_ptr<VulkanPhysicalDevice> &pDevice, const std::unique_ptr<VulkanLogicalDevice> &lDevice) {
 
     mIndexMemoryRequirements = mIndexBuffer->getMemoryRequirements();
 

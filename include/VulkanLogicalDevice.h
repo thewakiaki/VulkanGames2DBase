@@ -1,16 +1,16 @@
 #ifndef CUSTOMLD_H
 #define CUSTOMLD_H
 
-#include "CustomPD.h"
+#include "VulkanPhysicalDevice.h"
 
-class CustomLD{
+class VulkanLogicalDevice{
 public :
-    CustomLD() = default;
-    ~CustomLD();
+    VulkanLogicalDevice() = default;
+    ~VulkanLogicalDevice();
 
     void Cleanup();
 
-    bool CreateLogicalDevice(const CustomPD& device);
+    bool CreateLogicalDevice(const VulkanPhysicalDevice& device);
 
     [[nodiscard]] const std::unique_ptr<vk::raii::Device>& GetLogicalDevice() const { return mLogicalDevice; }
     [[nodiscard]] const std::unique_ptr<vk::raii::Queue>& GetGraphicsQueue() const { return mGraphicsQueue;}

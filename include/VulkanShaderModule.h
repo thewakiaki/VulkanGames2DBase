@@ -2,12 +2,12 @@
 #define CUSTOM_SM_H
 
 
-#include "CustomLD.h"
+#include "VulkanLogicalDevice.h"
 
-class CustomSM {
+class VulkanShaderModule {
 
 public:
-    bool CreateShaderModule(const CustomLD& lDevice, const char* fileName);
+    bool CreateShaderModule(const VulkanLogicalDevice& lDevice, const char* fileName);
 
     void Cleanup();
 
